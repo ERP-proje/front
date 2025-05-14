@@ -38,46 +38,40 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
     return <div>회원 정보를 불러오는 중...</div>;
   }
 
-  // ✅ 신규 진도 추가
-  const addRow = () => {
-    const newRow = { progressId: null, date: "", content: "" };
-    setProgressList([newRow, ...progressList]);
-    onModify({ progressList: [newRow, ...progressList] });
+  /// 공통 업데이트 함수
+  const updateProgressList = (newList: Progress[]) => {
+    setProgressList(newList);
+    onModify({ progressList: newList });
   };
 
-  // ✅ 진도 내용 수정
+  // ✅ 진도 추가
+  const addRow = () => {
+    const newRow: Progress = { progressId: null, date: "", content: "" };
+    updateProgressList([newRow, ...progressList]);
+  };
+
+  // ✅ 진도 수정
   const updateRow = (index: number, field: keyof Progress, value: string) => {
     const updatedList = progressList.map((item, i) =>
       i === index ? { ...item, [field]: value } : item
     );
-    setProgressList(updatedList);
-    onModify({ progressList: updatedList });
+    updateProgressList(updatedList);
   };
 
   // ✅ 진도 삭제
   const deleteRow = (index: number) => {
-    setProgressList((prevList) => {
-      // const updatedList = prevList.filter((_, i) => i !== index);
+    const target = progressList[index];
+    const isExisting = target.progressId !== null;
 
-  
-      const updatedList = [...prevList];
-      
-      // 서버에 `deleted: true`를 보내야 하는 경우 (progressId가 존재하는 기존 진도)
-      const isExistingProgress = prevList[index].progressId !== null;
-
-      if (isExistingProgress) {
-        onModify({
-          progressList: prevList.map((item, i) =>
-            i === index ? { ...item, deleted: true } : item
-          ),
-        });
-      } else {
-        const updatedList = prevList.filter((_, i) => i !== index); 
-        onModify({ progressList: updatedList });
-      }
-
-      return updatedList;
-    });
+    if (isExisting) {
+      const markedList = progressList.map((item, i) =>
+        i === index ? { ...item, deleted: true } : item
+      );
+      updateProgressList(markedList);
+    } else {
+      const filteredList = progressList.filter((_, i) => i !== index);
+      updateProgressList(filteredList);
+    }
   };
 
   return (
@@ -188,47 +182,46 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                 <th className="border p-2 text-center">삭제</th>
               </tr>
             </thead>
-              <tbody>
-                {progressList
-                  .filter((row) => !row.deleted) // 삭제된 진도 숨김
-                  .map((row, index) => (
-                    <tr key={row.progressId ?? `temp-${index}`}>
-                      <td className="border text-center">
-                        {progressList.length - index}
-                      </td>
-                      <td className="border">
-                        <input
-                          type="date"
-                          value={row.date}
-                          onChange={(e) =>
-                            updateRow(index, "date", e.target.value)
-                          }
-                          className="input-content w-full border-gray-300"
-                        />
-                      </td>
-                      <td className="border p-0">
-                        <input
-                          type="text"
-                          value={row.content}
-                          placeholder="내용 입력"
-                          onChange={(e) =>
-                            updateRow(index, "content", e.target.value)
-                          }
-                          className="input-content w-full border-gray-300"
-                        />
-                      </td>
-                      <td className="border text-center">
-                        <button
-                          onClick={() => deleteRow(index)}
-                          className="text-gray-500 hover:text-red-600"
-                        >
-                  <FaTrashAlt className="w-5 h-5" />
-                </button>
-              </td>
-            </tr>
-          ))}
-      </tbody>
-
+            <tbody>
+              {progressList
+                .filter((row) => !row.deleted) // 삭제된 진도 숨김
+                .map((row, index) => (
+                  <tr key={row.progressId ?? `temp-${index}`}>
+                    <td className="border text-center">
+                      {progressList.length - index}
+                    </td>
+                    <td className="border">
+                      <input
+                        type="date"
+                        value={row.date}
+                        onChange={(e) =>
+                          updateRow(index, "date", e.target.value)
+                        }
+                        className="input-content w-full border-gray-300"
+                      />
+                    </td>
+                    <td className="border p-0">
+                      <input
+                        type="text"
+                        value={row.content}
+                        placeholder="내용 입력"
+                        onChange={(e) =>
+                          updateRow(index, "content", e.target.value)
+                        }
+                        className="input-content w-full border-gray-300"
+                      />
+                    </td>
+                    <td className="border text-center">
+                      <button
+                        onClick={() => deleteRow(index)}
+                        className="text-gray-500 hover:text-red-600"
+                      >
+                        <FaTrashAlt className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
           </table>
 
           {/* ✅ 진도 추가 버튼 */}
