@@ -35,103 +35,130 @@ export default function ReservationContent({
   handleDeleteProgress,
 }: Props) {
   return (
-    <div className="flex gap-3">
-      {/* User photo */}
-      <div className="justify-center m-1 size-32">
-        <Image
-          src={userInfo?.photoUrl || "/reservationModal/noUser.png"}
-          alt="User Photo"
-          width={96}
-          height={96}
-          className="w-full h-full object-cover rounded-full"
-        />
-      </div>
-
-      {/* basic info */}
-      <div className="flex flex-col mx-2 max-w-[250px] max-h-[600px] overflow-y-auto space-y-2">
-        <div className="flex justify-between text-left m-1 font-semibold">
-          예약 시간
-        </div>
-        <div className="flex flex-row gap-1">
-          <input
-            className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0"
-            type="text"
-            maxLength={5}
-            value={userInfo?.formattedStartTime || ""}
-            placeholder="--:--"
-            readOnly={event?.mode === "add"}
-            onChange={(e) =>
-              handleTimeInputChange(e.target.value, "start", setUserInfo)
-            }
-          />
-          <div className="font-light p-2 min-h-7">~</div>
-          <input
-            className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0"
-            type="text"
-            maxLength={5}
-            value={userInfo?.formattedEndTime || ""}
-            placeholder="--:--"
-            readOnly={event?.mode === "add"}
-            onChange={(e) =>
-              handleTimeInputChange(e.target.value, "end", setUserInfo)
-            }
+    <div className="flex gap-6 items-start">
+      <div className="flex gap-3">
+        {/* User photo */}
+        <div className="justify-center m-1 size-32">
+          <Image
+            src={userInfo?.photoUrl || "/reservationModal/noUser.png"}
+            alt="User Photo"
+            width={96}
+            height={96}
+            className="w-full h-full object-cover rounded-full"
           />
         </div>
 
-        <div className="text-left m-1 font-semibold">성함</div>
-        <input
-          className="flex-1 font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7"
-          type="search"
-          value={event?.mode === "add" ? searchKeyword : userInfo?.name}
-          onChange={(e) => handleSearch(e.target.value)}
-          readOnly={event?.mode === "edit"}
-        />
-
-        {isSearching && <div className="p-2 text-gray-500">검색 중...</div>}
-        {searchKeyword && customerList.length > 0 && (
-          <div className="bg-white border border-gray-300 rounded-lg mt-2 max-h-40 overflow-y-auto">
-            {customerList.map((customer) => (
-              <div
-                key={customer.customerId}
-                className="p-2 hover:bg-[#F2F8ED] cursor-pointer"
-                onClick={() => handleSelectCustomer(customer)}
-              >
-                {customer.name}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="text-left m-1 font-semibold">전화번호</div>
-        <input
-          className="flex-1 font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7"
-          value={userInfo?.phone || ""}
-          type="tel"
-          onChange={(e) => handleInputChange("phone", e.target.value)}
-        />
-
-        <div className="flex flex-col">
-          <div className="flex flex-row">
-            <div className="flex-1 text-left m-1 font-semibold justify-around">
-              이벤트 종료 기간
-            </div>
-            <div className="flex-1 text-left m-1 font-semibold justify-around">
-              남은 기간
-            </div>
+        {/* basic info */}
+        <div className="flex flex-col mx-2 max-w-[250px] max-h-[600px] overflow-y-auto space-y-2">
+          <div className="flex justify-between text-left m-1 font-semibold">
+            예약 시간
           </div>
           <div className="flex flex-row gap-1">
-            <div className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0">
-              {userInfo?.endDate?.split("T")[0] || ""}
+            <input
+              className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0"
+              type="text"
+              maxLength={5}
+              value={userInfo?.formattedStartTime || ""}
+              placeholder="--:--"
+              readOnly={event?.mode === "add"}
+              onChange={(e) =>
+                handleTimeInputChange(e.target.value, "start", setUserInfo)
+              }
+            />
+            <div className="font-light p-2 min-h-7">~</div>
+            <input
+              className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0"
+              type="text"
+              maxLength={5}
+              value={userInfo?.formattedEndTime || ""}
+              placeholder="--:--"
+              readOnly={event?.mode === "add"}
+              onChange={(e) =>
+                handleTimeInputChange(e.target.value, "end", setUserInfo)
+              }
+            />
+          </div>
+
+          <div className="text-left m-1 font-semibold">성함</div>
+          <input
+            className="flex-1 font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7"
+            type="search"
+            value={event?.mode === "add" ? searchKeyword : userInfo?.name}
+            onChange={(e) => handleSearch(e.target.value)}
+            readOnly={event?.mode === "edit"}
+          />
+
+          {isSearching && <div className="p-2 text-gray-500">검색 중...</div>}
+          {searchKeyword && customerList.length > 0 && (
+            <div className="bg-white border border-gray-300 rounded-lg mt-2 max-h-40 overflow-y-auto">
+              {customerList.map((customer) => (
+                <div
+                  key={customer.customerId}
+                  className="p-2 hover:bg-[#F2F8ED] cursor-pointer"
+                  onClick={() => handleSelectCustomer(customer)}
+                >
+                  {customer.name}
+                </div>
+              ))}
             </div>
-            <div className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0">
-              {userInfo?.remainingTime || ""}
+          )}
+
+          <div className="text-left m-1 font-semibold">전화번호</div>
+          <input
+            className="flex-1 font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7"
+            value={userInfo?.phone || ""}
+            type="tel"
+            onChange={(e) => handleInputChange("phone", e.target.value)}
+          />
+
+          <div className="flex flex-col">
+            <div className="flex flex-row">
+              <div className="flex-1 text-left m-1 font-semibold justify-around">
+                이벤트 종료 기간
+              </div>
+              <div className="flex-1 text-left m-1 font-semibold justify-around">
+                남은 기간
+              </div>
             </div>
+            <div className="flex flex-row gap-1">
+              <div className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0">
+                {userInfo?.endDate?.split("T")[0] || ""}
+              </div>
+              <div className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0">
+                {userInfo?.remainingTime || ""}
+              </div>
+            </div>
+          </div>
+
+          <div className="text-left m-1 font-semibold">이용권</div>
+          <div className="font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7">
+            {userInfo?.planName || ""}
           </div>
         </div>
 
-        <div className="text-left m-1 font-semibold">이용권</div>
-        <div className="font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7">
-          {userInfo?.planName || ""}
+        <div className="flex flex-col gap-4 w-[320px]">
+          <div className="w-[320px]">
+            <div className="text-left m-1 font-semibold">회원 메모</div>
+            <textarea
+              className={`w-full h-[100px] rounded-lg p-[8px_12px] resize-none transition-colors
+        ${
+          userInfo?.memo
+            ? "bg-[#F2F8ED] border border-[#B4D89C] text-[#3C6229]"
+            : "bg-white border border-[#D1D1D1] text-gray-700"
+        }`}
+              placeholder="회원 관련 메모를 입력하세요"
+              value={userInfo?.memo || ""}
+              onChange={(e) => handleInputChange("memo", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <div className="text-left m-1 font-semibold">진도표</div>
+            <div
+              className="w-[320px] h-[192px] rounded-lg border border-[#D1D1D1] bg-white p-[8px_12px] text-gray-700 text-sm leading-relaxed overflow-y-auto select-none"
+              aria-hidden="true"
+            ></div>
+          </div>
         </div>
 
         {event?.mode === "edit" && (
