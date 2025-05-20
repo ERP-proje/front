@@ -16,10 +16,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/reservation/page.js"
     ],
-    "/_not-found/page": [
+    "/members/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/members/page.js"
+    ],
+    "/rewards/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/rewards/page.js"
     ]
   }
 }

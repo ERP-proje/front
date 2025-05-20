@@ -51,18 +51,20 @@ const MemberRow = ({
               {member.name}
             </div>
             <div
-              className={`px-2 py-1 text-xs sm:text-sm rounded ${member.gender === "남"
-                ? "bg-blue-100 text-blue-600"
-                : "bg-pink-100 text-pink-600"
-                }`}
+              className={`px-2 py-1 text-xs sm:text-sm rounded ${
+                member.gender === "남"
+                  ? "bg-blue-100 text-blue-600"
+                  : "bg-pink-100 text-pink-600"
+              }`}
             >
               {getLabel(member.gender)}
             </div>
             <div
-              className={`px-2 py-1 text-xs sm:text-sm rounded ${member.licenseType === "TYPE_1" || "TYPE_1_AUTO"
-                ? "bg-white text-gray-500"
-                : "bg-gray-300 text-gray-800"
-                }`}
+              className={`px-2 py-1 text-xs sm:text-sm rounded ${
+                member.licenseType === "TYPE_1" || "TYPE_1_AUTO"
+                  ? "bg-white text-gray-500"
+                  : "bg-gray-300 text-gray-800"
+              }`}
             >
               {getLabel(member.licenseType)}
             </div>
@@ -82,10 +84,11 @@ const MemberRow = ({
             </div>
           </div>
           <div
-            className={`px-2 w-12 sm:w-14 py-1 justify-center text-xs sm:text-sm rounded-full ${member.planType === "PERIOD_BASED"
-              ? "bg-[#3C6229] text-white"
-              : "bg-[#B4D89C] text-black"
-              }`}
+            className={`px-2 w-12 sm:w-14 py-1 justify-center text-xs sm:text-sm rounded-full ${
+              member.planType === "PERIOD_BASED"
+                ? "bg-[#3C6229] text-white"
+                : "bg-[#B4D89C] text-black"
+            }`}
           >
             {getLabel(member.planType)}
           </div>
@@ -145,8 +148,9 @@ const MemberRow = ({
         </div>
         <span className="text-[#888888]">기타 결제</span>
         <div
-          className={`text-xl font-bold ${member.otherPaymentPrice > 0 ? "text-[#3464B2]" : "text-red-600"
-            }`}
+          className={`text-xl font-bold ${
+            member.otherPaymentPrice > 0 ? "text-[#3464B2]" : "text-red-600"
+          }`}
         >
           {member.otherPaymentPrice > 0
             ? `+${member.otherPaymentPrice}`

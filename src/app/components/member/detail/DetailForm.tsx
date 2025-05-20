@@ -3,83 +3,36 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "../../ui/Dropdown";
 import Camera from "../create/Camera";
-import { FaTrashAlt } from "react-icons/fa";
-import type {
-  CustomerDetailData,
-  UpdateCustomerDetail,
-} from "@/store/useCustomerStore";
+import type { CustomerDetailData } from "@/store/useCustomerStore";
+import usePaginatedMembers from "@/hooks/member/usePaginatedMembers";
+import { Member } from "@/types/memberType";
 
 interface Progress {
   progressId: number | null;
   date: string;
   content: string;
   deleted?: boolean;
+  usedTime: number;
 }
 
 interface DetailFormProps {
   customer: Partial<CustomerDetailData>;
-  onModify: (
-    updatedData: Partial<CustomerDetailData & UpdateCustomerDetail>
-  ) => void;
+  usedTime: number;
 }
-const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
-  const [progressList, setProgressList] = useState<Progress[]>([
-    { progressId: null, date: "", content: "" },
-  ]);
 
-  // ✅ 고객 데이터 변경 시, 진도 리스트도 업데이트
-  useEffect(() => {
-    if (customer?.progressList) {
-      setProgressList(customer.progressList);
-    }
-  }, [customer?.progressList]);
-
+const DetailForm: React.FC<DetailFormProps> = ({ customer, usedTime }) => {
   if (!customer) {
     return <div>회원 정보를 불러오는 중...</div>;
   }
 
-  /// 공통 업데이트 함수
-  const updateProgressList = (newList: Progress[]) => {
-    setProgressList(newList);
-    onModify({ progressList: newList });
-  };
-
-  // ✅ 진도 추가
-  const addRow = () => {
-    const newRow: Progress = { progressId: null, date: "", content: "" };
-    updateProgressList([newRow, ...progressList]);
-  };
-
-  // ✅ 진도 수정
-  const updateRow = (index: number, field: keyof Progress, value: string) => {
-    const updatedList = progressList.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
-    );
-    updateProgressList(updatedList);
-  };
-
-  // ✅ 진도 삭제
-  const deleteRow = (index: number) => {
-    const target = progressList[index];
-    const isExisting = target.progressId !== null;
-
-    if (isExisting) {
-      const markedList = progressList.map((item, i) =>
-        i === index ? { ...item, deleted: true } : item
-      );
-      updateProgressList(markedList);
-    } else {
-      const filteredList = progressList.filter((_, i) => i !== index);
-      updateProgressList(filteredList);
-    }
-  };
+  const progressList = (customer.progressList || []) as Progress[];
 
   return (
     <div className="space-y-6 p-6">
       <div className="flex gap-8 items-start">
         <div className="flex flex-col items-center w-1/3">
           <Camera
-            onCapture={(file) => onModify({ photoFile: file })}
+            onCapture={() => {}}
             photoUrl={
               customer.photoFile
                 ? URL.createObjectURL(customer.photoFile)
@@ -88,7 +41,6 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
           />
         </div>
 
-        {/* 오른쪽: 입력 폼 */}
         <div className="w-2/3">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -96,23 +48,17 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
               <input
                 type="text"
                 className="input-content w-full"
-                value={customer.name}
-                onChange={(e) => onModify({ name: e.target.value })}
+                value={customer.name || ""}
+                readOnly
               />
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">성별</label>
-              <Dropdown
-                options={[
-                  { label: "여", value: "FEMALE" },
-                  { label: "남", value: "MALE" },
-                ]}
-                defaultValue={customer.gender}
-                onChange={(value) =>
-                  onModify({
-                    gender: value === "MALE" ? "MALE" : "FEMALE",
-                  })
-                }
+              <input
+                type="text"
+                className="input-content w-full"
+                value={customer.gender === "MALE" ? "남" : "여"}
+                readOnly
               />
             </div>
             <div>
@@ -123,7 +69,7 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                 type="date"
                 className="input-content w-full"
                 value={customer.birthDate || ""}
-                onChange={(e) => onModify({ birthDate: e.target.value })}
+                readOnly
               />
             </div>
             <div>
@@ -133,41 +79,39 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
               <input
                 type="text"
                 className="input-content w-full"
-                value={customer.phone}
-                onChange={(e) => onModify({ phone: e.target.value })}
+                value={customer.phone || ""}
+                readOnly
               />
             </div>
           </div>
         </div>
       </div>
+
       <div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">주소</label>
-          <input
-            type="text"
-            className="input-content w-full mb-4"
-            value={customer.address}
-            onChange={(e) => onModify({ address: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">방문 경로</label>
-          <textarea
-            className="input-content w-full"
-            value={customer.visitPath}
-            onChange={(e) => onModify({ visitPath: e.target.value })}
-          ></textarea>
-        </div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">메모</label>
-          <textarea
-            className="input-content w-full"
-            value={customer.memo}
-            onChange={(e) => onModify({ memo: e.target.value })}
-          ></textarea>
-        </div>
+        <label className="block text-sm text-gray-600 mb-1">주소</label>
+        <input
+          type="text"
+          className="input-content w-full mb-4"
+          value={customer.address || ""}
+          readOnly
+        />
+
+        <label className="block text-sm text-gray-600 mb-1">방문 경로</label>
+        <textarea
+          className="input-content w-full"
+          value={customer.visitPath || ""}
+          readOnly
+        ></textarea>
+
+        <label className="block text-sm text-gray-600 mb-1 mt-4">메모</label>
+        <textarea
+          className="input-content w-full"
+          value={customer.memo || ""}
+          readOnly
+        ></textarea>
       </div>
-      {/* ✅ 진도표 */}
+
+      {/* ✅ 진도표 출력 (읽기 전용) */}
       <div>
         <label className="w-full block text-sm text-gray-600 mb-1">
           진도표
@@ -177,60 +121,33 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="border">회차</th>
-                <th className="border">날짜 선택</th>
+                <th className="border">날짜</th>
                 <th className="border">내용</th>
-                <th className="border p-2 text-center">삭제</th>
+                <th className="border p-2 text-center">사용 시간</th>
               </tr>
             </thead>
             <tbody>
               {progressList
-                .filter((row) => !row.deleted) // 삭제된 진도 숨김
+                .filter((row) => !row.deleted)
                 .map((row, index) => (
                   <tr key={row.progressId ?? `temp-${index}`}>
                     <td className="border text-center">
                       {progressList.length - index}
                     </td>
-                    <td className="border">
-                      <input
-                        type="date"
-                        value={row.date}
-                        onChange={(e) =>
-                          updateRow(index, "date", e.target.value)
-                        }
-                        className="input-content w-full border-gray-300"
-                      />
+                    <td className="border text-center">{row.date || "-"}</td>
+                    <td className="border text-left p-2">
+                      {row.content || "-"}
                     </td>
-                    <td className="border p-0">
-                      <input
-                        type="text"
-                        value={row.content}
-                        placeholder="내용 입력"
-                        onChange={(e) =>
-                          updateRow(index, "content", e.target.value)
-                        }
-                        className="input-content w-full border-gray-300"
-                      />
-                    </td>
-                    <td className="border text-center">
-                      <button
-                        onClick={() => deleteRow(index)}
-                        className="text-gray-500 hover:text-red-600"
-                      >
-                        <FaTrashAlt className="w-5 h-5" />
-                      </button>
+                    <td
+                      className="border text-center"
+                      onClick={() => console.log()}
+                    >
+                      {usedTime != null ? `${usedTime}` : "-"}
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
-
-          {/* ✅ 진도 추가 버튼 */}
-          <button
-            className="absolute w-8 h-8 border border-1 left-1/2 transform -translate-x-1/2 translate-y-0 text-gray-500 bg-white hover:text-[#3C6229] hover:border-[#3C6229] rounded-full shadow-md flex items-center justify-center"
-            onClick={addRow}
-          >
-            +
-          </button>
         </div>
       </div>
     </div>

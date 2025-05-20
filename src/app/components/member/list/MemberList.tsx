@@ -14,6 +14,9 @@ const MemberList = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null
   );
+  const [selectedCustomerUsedTime, setSelectedCustomerUsedTime] = useState<
+    number | null
+  >();
 
   // ✅ React Query 무한스크롤 데이터 가져오기
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
@@ -46,11 +49,13 @@ const MemberList = () => {
     return () => observer.disconnect();
   }, [loadMore]);
 
-  const handleRowClick = (customerId: number) => {
+  const handleRowClick = (customerId: number, customerUsedTime: number) => {
     console.log("선택된 customerId:", customerId);
     fetchCustomer(customerId); // Zustand에서 API 호출
     setSelectedCustomerId(customerId);
     setIsModalOpen(true);
+    setSelectedCustomerUsedTime(customerUsedTime);
+    console.log("사용 시간 :", selectedCustomerUsedTime);
   };
 
   const closeModal = () => {
@@ -66,7 +71,7 @@ const MemberList = () => {
             <MemberRow
               key={member.customerId}
               member={member}
-              onClick={() => handleRowClick(member.customerId)}
+              onClick={() => handleRowClick(member.customerId, member.usedTime)}
             />
           ))}
       {/* ✅ 무한스크롤 트리거 요소 (마지막 요소 감지) */}
@@ -79,13 +84,14 @@ const MemberList = () => {
         )}
       </div>
       {/* 모달 */}
-      {isModalOpen && selectedCustomerId && (
+      {isModalOpen && selectedCustomerId && selectedCustomerUsedTime && (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white w-full max-w-4xl p-6 rounded-lg shadow-lg relative">
               <DetailMember
                 customerId={selectedCustomerId}
                 onClose={closeModal}
+                usedTime={selectedCustomerUsedTime}
               />
             </div>
           </div>

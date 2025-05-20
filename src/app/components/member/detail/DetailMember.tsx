@@ -21,9 +21,14 @@ import { useQueryClient } from "@tanstack/react-query";
 interface DetailMemberProps {
   customerId: number;
   onClose: () => void;
+  usedTime: number;
 }
 
-const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
+const DetailMember: React.FC<DetailMemberProps> = ({
+  customerId,
+  onClose,
+  usedTime,
+}) => {
   const { showAlert } = useAlertStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isModified, setIsModified] = useState(false);
@@ -191,9 +196,7 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
     <Modal
       isOpen={!!customer}
       onClose={onClose}
-      leftChildren={
-        <DetailForm customer={tempCustomer} onModify={handleModify} />
-      }
+      leftChildren={<DetailForm customer={tempCustomer} usedTime={usedTime} />}
       rightChildren={
         <div className="relative overflow-y-scroll h-full flex flex-col">
           <div className="flex-grow">
