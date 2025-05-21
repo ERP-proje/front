@@ -8,7 +8,13 @@ import useCustomerStore from "@/store/useCustomerStore";
 import usePaginatedMembers from "@/hooks/member/usePaginatedMembers";
 import MemberRowSkeleton from "./MemberRowSkeleton";
 
-const MemberList = () => {
+const MemberList = ({
+  selectedSort,
+  selectedMemberStatus,
+}: {
+  selectedSort?: string | null;
+  selectedMemberStatus?: string | null;
+}) => {
   const { fetchCustomer } = useCustomerStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(

@@ -105,6 +105,27 @@ export const memberAPI = {
   },
 
   /**
+   * 이용 가능한 회원의 id 메서드
+   * @returns 이용가능 회원 id 리스트
+   */
+  getActiveMemberRow: async () => {
+    try {
+      const response = await apiClient.get(
+        "/api/customer/getAvailableCustomerNames"
+      );
+      const ids = response.data.data.map(
+        (item: { id: number; name: string }) => item.name
+      );
+      return ids;
+    } catch (error: unknown) {
+      const errorMessage = errorHandler(error);
+      throw new Error(errorMessage);
+    }
+  },
+
+  /**/
+
+  /**
    * 회원 검색 메서드
    * @param keyword 검색 키워드
    * @returns 검색 결과 리스트

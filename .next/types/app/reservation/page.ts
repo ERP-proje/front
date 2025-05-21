@@ -1,4 +1,4 @@
-// File: /Users/jintaek/Documents/project/erp/front/src/app/reservation/page.tsx
+// File: C:\Projects\ErpProj\front\src\app\reservation\page.tsx
 import * as entry from '../../../../src/app/reservation/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

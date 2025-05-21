@@ -8,7 +8,15 @@ import { memberAPI } from "@/api/member";
 import debounce from "lodash/debounce";
 import { FormData } from "@/types/memberType";
 
-const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
+const TopControls = ({
+  setSearchResults,
+  setSelectedOption,
+  setMemberStatusOption,
+}: {
+  setSearchResults: any;
+  setSelectedOption: any;
+  setMemberStatusOption: any;
+}) => {
   const [keyword, setKeyword] = useState("");
   const [formData, setFormData] = useState<FormData>({
     planId: 0,
@@ -63,17 +71,13 @@ const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
     }, 500),
     [setSearchResults]
   );
+
   useEffect(() => {
     return () => {
       debouncedSearch.cancel(); // ✅ 언마운트 시 debounce 취소
     };
   }, []);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setKeyword(value);
-    debouncedSearch(value);
-  };
   const sortingOptions: DropdownOption[] = [
     { label: "최신순", value: "latest" },
     { label: "이용 시간이 많은 순", value: "most_used" },
@@ -87,6 +91,19 @@ const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
     { label: "전체 회원 조회", value: "all" },
   ];
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setKeyword(value);
+    debouncedSearch(value);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSelectedOption(value);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setMemberStatusOption(value);
+  };
   return (
     <div className="flex items-center mb-4 h-16 bg-[#f6f6f6] p-4 rounded-lg shadow">
       {/* 검색 */}
@@ -105,12 +122,14 @@ const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
         placeholder="정렬 기준 선택"
         defaultValue=""
         className="ml-4 w-[180px]"
+        onChange={handleSortChange}
       />
       <Dropdown
         options={memberStatusOptions}
         placeholder="정렬 기준 선택"
         defaultValue=""
         className="ml-4 w-[200px]"
+        onChange={handleStatusChange}
       />
       <div className="ml-auto">
         <CreateMember formData={formData} setFormData={setFormData} />

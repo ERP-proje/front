@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SideBar from "../components/SideBar";
 import TopControls from "../components/member/list/TopControls";
 import MemberList from "../components/member/list/MemberList";
@@ -14,6 +14,11 @@ export default function Page() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null
   );
+  const [selectedSort, setSelectedSort] = useState<string | null>(null);
+  const [selectedMemberStatus, setSelectedMemberStatus] = useState<
+    string | null
+  >(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleRowClick = (customerId: number) => {
@@ -26,6 +31,10 @@ export default function Page() {
     setIsModalOpen(false);
     setSelectedCustomerId(null); // 모달 닫기 시 초기화
   };
+  useEffect(() => {
+    console.log("selectedSort: ", selectedSort);
+    console.log("selectedMemberStatus: ", selectedMemberStatus);
+  }, [selectedSort, selectedMemberStatus]);
   return (
     <div className="flex items-center h-screen">
       <div className="h-full">
@@ -33,7 +42,11 @@ export default function Page() {
       </div>
       {/* 메인콘텐츠 */}
       <div className="relative h-[900px] flex-[8_0_0] bg-white rounded-xl p-4 max-w-[1500px] w-full">
-        <TopControls setSearchResults={setSearchResults} />
+        <TopControls
+          setSearchResults={setSearchResults}
+          setSelectedOption={setSelectedSort} // "정렬 기준" 선택 상태
+          setMemberStatusOption={setSelectedMemberStatus} // "회원 상태" 선택 상태
+        />
         <div className="relative h-[790px]">
           {/* 검색결과가 있을경우 */}
           {searchResults.length > 0 ? (
@@ -60,7 +73,10 @@ export default function Page() {
               )}
             </div>
           ) : (
-            <MemberList />
+            <MemberList
+              selectedMemberStatus={selectedMemberStatus}
+              selectedSort={selectedSort}
+            />
           )}
         </div>
       </div>
