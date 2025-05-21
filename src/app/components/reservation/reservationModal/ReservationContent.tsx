@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { handleTimeInputChange } from "@/utils/reservation/handleTimeInputChange";
+import { useState } from "react";
 
 interface Props {
   userInfo: any;
@@ -34,6 +35,7 @@ export default function ReservationContent({
   handleAddIcon,
   handleDeleteProgress,
 }: Props) {
+  const [timeError, setTimeError] = useState("");
   return (
     <div className="flex gap-6 items-start">
       <div className="flex gap-3">
@@ -60,9 +62,13 @@ export default function ReservationContent({
               maxLength={5}
               value={userInfo?.formattedStartTime || ""}
               placeholder="--:--"
-              readOnly={event?.mode === "add"}
               onChange={(e) =>
-                handleTimeInputChange(e.target.value, "start", setUserInfo)
+                handleTimeInputChange(
+                  e.target.value,
+                  "start",
+                  setUserInfo,
+                  setTimeError
+                )
               }
             />
             <div className="font-light p-2 min-h-7">~</div>
@@ -72,12 +78,19 @@ export default function ReservationContent({
               maxLength={5}
               value={userInfo?.formattedEndTime || ""}
               placeholder="--:--"
-              readOnly={event?.mode === "add"}
               onChange={(e) =>
-                handleTimeInputChange(e.target.value, "end", setUserInfo)
+                handleTimeInputChange(
+                  e.target.value,
+                  "end",
+                  setUserInfo,
+                  setTimeError
+                )
               }
             />
           </div>
+          {timeError && (
+            <div className="text-red-500 text-sm mt-1">{timeError}</div>
+          )}
 
           <div className="text-left m-1 font-semibold">성함</div>
           <input
