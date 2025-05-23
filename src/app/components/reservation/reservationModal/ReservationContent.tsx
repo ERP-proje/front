@@ -147,13 +147,60 @@ export default function ReservationContent({
           <div className="font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7">
             {userInfo?.planName || ""}
           </div>
+          {event?.mode === "edit" && (
+            <div>
+              <div className="text-left m-1 font-semibold">지각/결석</div>
+              <div className="flex flex-row">
+                <Image
+                  src={
+                    userInfo?.attendanceStatus === "LATE"
+                      ? "/reservationModal/checked.png"
+                      : "/reservationModal/unchecked.png"
+                  }
+                  alt="late"
+                  width={100}
+                  height={100}
+                  className="flex self-center size-5"
+                  onClick={() =>
+                    setUserInfo((prev: any) => ({
+                      ...prev,
+                      attendanceStatus:
+                        prev.attendanceStatus === "LATE" ? "NORMAL" : "LATE",
+                    }))
+                  }
+                />
+                <div className="flex-1 font-light p-2 min-h-7">지각</div>
+                <Image
+                  src={
+                    userInfo?.attendanceStatus === "ABSENT"
+                      ? "/reservationModal/checked.png"
+                      : "/reservationModal/unchecked.png"
+                  }
+                  alt="absent"
+                  width={100}
+                  height={100}
+                  className="flex self-center size-5"
+                  onClick={() =>
+                    setUserInfo((prev: any) => ({
+                      ...prev,
+                      attendanceStatus:
+                        prev.attendanceStatus === "ABSENT"
+                          ? "NORMAL"
+                          : "ABSENT",
+                    }))
+                  }
+                />
+                <div className="flex-1 font-light p-2 min-h-7">결석</div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4 w-[320px]">
           <div className="w-[320px]">
             <div className="text-left m-1 font-semibold">회원 메모</div>
             <textarea
-              className={`w-full h-[100px] rounded-lg p-[8px_12px] resize-none transition-colors
+              className={`mt-2 w-full h-[100px] rounded-lg p-[8px_12px] resize-none transition-colors
         ${
           userInfo?.memo
             ? "bg-[#F2F8ED] border border-[#B4D89C] text-[#3C6229]"
@@ -168,57 +215,11 @@ export default function ReservationContent({
           <div>
             <div className="text-left m-1 font-semibold">진도표</div>
             <div
-              className="w-[320px] h-[192px] rounded-lg border border-[#D1D1D1] bg-white p-[8px_12px] text-gray-700 text-sm leading-relaxed overflow-y-auto select-none"
+              className="mt-2 w-[320px] h-[192px] rounded-lg border border-[#D1D1D1] bg-white p-[8px_12px] text-gray-700 text-sm leading-relaxed overflow-y-auto select-none"
               aria-hidden="true"
             ></div>
           </div>
         </div>
-
-        {event?.mode === "edit" && (
-          <div>
-            <div className="text-left m-1 font-semibold">지각/결석</div>
-            <div className="flex flex-row">
-              <Image
-                src={
-                  userInfo?.attendanceStatus === "LATE"
-                    ? "/reservationModal/checked.png"
-                    : "/reservationModal/unchecked.png"
-                }
-                alt="late"
-                width={100}
-                height={100}
-                className="flex self-center size-5"
-                onClick={() =>
-                  setUserInfo((prev: any) => ({
-                    ...prev,
-                    attendanceStatus:
-                      prev.attendanceStatus === "LATE" ? "NORMAL" : "LATE",
-                  }))
-                }
-              />
-              <div className="flex-1 font-light p-2 min-h-7">지각</div>
-              <Image
-                src={
-                  userInfo?.attendanceStatus === "ABSENT"
-                    ? "/reservationModal/checked.png"
-                    : "/reservationModal/unchecked.png"
-                }
-                alt="absent"
-                width={100}
-                height={100}
-                className="flex self-center size-5"
-                onClick={() =>
-                  setUserInfo((prev: any) => ({
-                    ...prev,
-                    attendanceStatus:
-                      prev.attendanceStatus === "ABSENT" ? "NORMAL" : "ABSENT",
-                  }))
-                }
-              />
-              <div className="flex-1 font-light p-2 min-h-7">결석</div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
