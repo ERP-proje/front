@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { handleTimeInputChange } from "@/utils/reservation/handleTimeInputChange";
+import { putUpdateReservations } from "@/api/reservation/putUpdateReservations";
 import { useState } from "react";
 
 interface Props {
