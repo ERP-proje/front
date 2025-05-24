@@ -7,6 +7,7 @@ export function handleTimeInputChange(
   setUserInfo((prev) => ({
     ...prev,
     [`formatted${type === "start" ? "Start" : "End"}Time`]: inputValue,
+    seatNumber: prev.seatNumber,
   }));
 
   if (inputValue === "") {

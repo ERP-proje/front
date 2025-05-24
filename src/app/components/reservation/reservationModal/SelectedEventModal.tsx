@@ -52,6 +52,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
         if (data?.data) {
           setUserInfo({
             ...data.data,
+            seatNumber: data.data.seatNumber ?? event.seatNumber,
             progressList: Array.isArray(data.data.progressList)
               ? data.data.progressList
               : data.data.progressList
@@ -87,28 +88,37 @@ const SelectedEventModal: React.FC<EventProps> = ({
       setTimeout(async () => {
         await refreshCalendar();
       }, 1000);
-      
+
       onClose();
       return response;
     }
   };
 
   const handleEditSubmit = async () => {
-    if (event?.mode == "edit") {
-      const response = await putUpdateReservations({
-        reservationId: Number(event?.reservationId),
-        reservationDate: userInfo?.reservationDate,
-        startIndex: userInfo?.startIndex,
-        endIndex: userInfo?.endIndex,
-        memo: userInfo?.memo,
-        seatNumber: event?.seatNumber,
-        attendanceStatus: userInfo?.attendanceStatus || "NORMAL",
-        progressList: userInfo?.progressList || [],
-      });
+    if (event?.mode === "edit") {
+      try {
+        const response = await putUpdateReservations({
+          reservationId: Number(event.reservationId),
+          reservationDate: userInfo?.reservationDate,
+          startIndex: userInfo?.startIndex,
+          endIndex: userInfo?.endIndex,
+          memo: userInfo?.memo,
+          seatNumber: userInfo.seatNumber,
+          attendanceStatus: userInfo?.attendanceStatus || "NORMAL",
+          progressList: (userInfo?.progressList || []).map((p: any) => ({
+            progressId: p.progressId,
+            content: p.content,
+          })),
+        });
 
-      await refreshCalendar();
-      onClose();
-      return response;
+        console.log("✅ API 응답:", response);
+
+        await refreshCalendar();
+        onClose();
+      } catch (err) {
+        console.error("❌ API 호출 에러:", err);
+        alert("예약 수정에 실패했습니다.");
+      }
     }
   };
 

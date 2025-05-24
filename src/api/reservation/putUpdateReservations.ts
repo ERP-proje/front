@@ -12,25 +12,21 @@ export const putUpdateReservations = async (data: {
   attendanceStatus: string;
   progressList: {
     progressId: number;
-    date: string;
     content: string;
-    deleted: boolean;
-  };
+  }[];
 }) => {
-  console.log("data", data);
   try {
-    console.log(data);
     const response = await apiClient.put(
       "/api/reservation/updatedReservation",
       {
-        reservationId: data?.reservationId,
-        reservationDate: data?.reservationDate,
-        startIndex: data?.startIndex,
-        endIndex: data?.endIndex,
-        memo: data?.memo,
-        seatNumber: data?.seatNumber,
-        attendanceStatus: data?.attendanceStatus,
-        progressList: data?.progressList,
+        reservationId: data.reservationId,
+        reservationDate: data.reservationDate,
+        startIndex: data.startIndex,
+        endIndex: data.endIndex,
+        memo: data.memo,
+        seatNumber: data.seatNumber,
+        attendanceStatus: data.attendanceStatus,
+        progressList: data.progressList,
       }
     );
     if (response.status === 200) {
