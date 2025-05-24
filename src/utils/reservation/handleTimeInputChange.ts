@@ -1,31 +1,32 @@
-import { timeMapping } from "./timeMapping";
-
-export const handleTimeInputChange = (
-  input: string,
+export function handleTimeInputChange(
+  inputValue: string,
   type: "start" | "end",
-  setUserInfo: React.Dispatch<React.SetStateAction<any>>
-) => {
-  const numericOnly = input.replace(/[^0-9]/g, "").slice(0, 4);
-  let formattedTime = "";
+  setUserInfo: (updater: (prev: any) => any) => void,
+  setTimeError: (msg: string) => void
+) {
+  setUserInfo((prev) => ({
+    ...prev,
+    [`formatted${type === "start" ? "Start" : "End"}Time`]: inputValue,
+    seatNumber: prev.seatNumber,
+  }));
 
-  if (numericOnly.length === 0) {
-    formattedTime = "";
-  } else if (numericOnly.length <= 2) {
-    formattedTime = numericOnly;
-  } else {
-    formattedTime = `${numericOnly.slice(0, 2)}:${numericOnly.slice(2)}`;
+  if (inputValue === "") {
+    setTimeError("");
+    return;
   }
 
-  const isValidTimeFormat =
-    formattedTime.length === 5 && formattedTime.includes(":");
+  const isValidFormat = /^\d{2}:\d{2}$/.test(inputValue);
+  if (!isValidFormat) {
+    setTimeError("시간은 HH:MM 형식으로 입력해주세요");
+    return;
+  }
 
-  setUserInfo((prev: any) => ({
-    ...prev,
-    [type === "start" ? "formattedStartTime" : "formattedEndTime"]:
-      formattedTime,
-    ...(isValidTimeFormat && {
-      [type === "start" ? "startIndex" : "endIndex"]:
-        timeMapping[formattedTime] ?? "",
-    }),
-  }));
-};
+  const [hh, mm] = inputValue.split(":").map(Number);
+
+  if (hh < 0 || hh > 23 || (mm !== 0 && mm !== 30)) {
+    setTimeError("시간은 30분 단위로만 입력 가능합니다");
+    return;
+  }
+
+  setTimeError("");
+}
