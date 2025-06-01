@@ -131,7 +131,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
     }
   };
 
-  const [showProgressModal, setShowProgressModal] = useState(true);
+  const [showProgressModal, setShowProgressModal] = useState(false);
   const [progressContent, setProgressContent] = useState("");
   const currentDate = new Date().toISOString().split("T")[0];
 
