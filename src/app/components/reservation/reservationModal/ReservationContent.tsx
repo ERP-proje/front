@@ -58,7 +58,7 @@ export default function ReservationContent({
           </div>
           <div className="flex flex-row gap-1">
             <input
-              className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0"
+              className="flex-1 font-light bg-[#F2F8ED] border border-[#B4D89C] p-[8px_12px] rounded-lg text-[#3C6229] min-h-7 min-w-0"
               type="text"
               maxLength={5}
               value={userInfo?.formattedStartTime || ""}
@@ -74,7 +74,7 @@ export default function ReservationContent({
             />
             <div className="font-light p-2 min-h-7">~</div>
             <input
-              className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0"
+              className="flex-1 font-light bg-[#F2F8ED] border border-[#B4D89C] p-[8px_12px] rounded-lg text-[#3C6229] min-h-7 min-w-0"
               type="text"
               maxLength={5}
               value={userInfo?.formattedEndTime || ""}
@@ -95,7 +95,7 @@ export default function ReservationContent({
 
           <div className="text-left m-1 font-semibold">성함</div>
           <input
-            className="flex-1 font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7"
+            className="flex-1 font-light bg-[#F2F8ED] p-[8px_12px] rounded-lg border border-[#B4D89C] text-[#3C6229] min-h-7"
             type="search"
             value={event?.mode === "add" ? searchKeyword : userInfo?.name}
             onChange={(e) => handleSearch(e.target.value)}
@@ -119,7 +119,7 @@ export default function ReservationContent({
 
           <div className="text-left m-1 font-semibold">전화번호</div>
           <input
-            className="flex-1 font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7"
+            className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7"
             value={userInfo?.phone || ""}
             type="tel"
             onChange={(e) => handleInputChange("phone", e.target.value)}
@@ -135,17 +135,17 @@ export default function ReservationContent({
               </div>
             </div>
             <div className="flex flex-row gap-1">
-              <div className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0">
+              <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0">
                 {userInfo?.endDate?.split("T")[0] || ""}
               </div>
-              <div className="flex-1 font-light bg-[#F6F6F6] border-[#D1D1D1] border-2 p-2 rounded-lg text-[#888888] min-h-7 min-w-0">
+              <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0">
                 {userInfo?.remainingTime || ""}
               </div>
             </div>
           </div>
 
           <div className="text-left m-1 font-semibold">이용권</div>
-          <div className="font-light bg-[#F2F8ED] p-2 rounded-lg border-[#B4D89C] border-2 text-[#3C6229] min-h-7">
+          <div className="font-light bg-[#F6F6F6] p-[8px_12px] rounded-lg border border-[#D1D1D1] text-[#888888] min-h-7">
             {userInfo?.planName || ""}
           </div>
           {event?.mode === "edit" && (
