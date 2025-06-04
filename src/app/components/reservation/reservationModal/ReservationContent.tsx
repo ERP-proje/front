@@ -215,7 +215,11 @@ export default function ReservationContent({
 
           <div>
             <div className="text-left m-1 font-semibold">진도표</div>
-            <div className="mt-2 w-[320px] h-[251px] rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto">
+            <div
+              className={`mt-2 w-[320px] rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto ${
+                event?.mode === "edit" ? "h-[251px]" : "min-h-[180px]"
+              }`}
+            >
               {userInfo?.progressList?.filter((p: any) => !p.deleted).length >
               0 ? (
                 userInfo.progressList
@@ -223,7 +227,8 @@ export default function ReservationContent({
                   .map((p: any) => (
                     <div
                       key={`${p.progressId}-${p.date}`}
-                      className="w-full h-[53px] mb-2 px-[10px] py-[8px] border border-[#D1D1D1] rounded-lg flex justify-between items-start"
+                      className="w-full h-[53px] mb-2 px-[10px] py-[8px] rounded-lg flex justify-between items-start
+             border border-[#D1D1D1] hover:border-[#B4D89C] hover:border-2 transition-all duration-150 cursor-pointer"
                       onClick={() => handleEditProgress(p)}
                     >
                       <div className="flex flex-col justify-start">
