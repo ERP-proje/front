@@ -41,12 +41,11 @@ const SelectedEventModal: React.FC<EventProps> = ({
   calendarInstance,
 }) => {
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [editProgress, setEditProgress] = useState<any>(null);
+  const [progressUsedTime, setProgressUsedTime] = useState(""); // 시간 입력 상태
 
-  // mode case
   useEffect(() => {
-    if (event?.mode == "add") {
-      setUserInfo({ ...event, progressList: [] });
-    } else if (event?.mode == "edit") {
+    if (event?.mode === "edit") {
       const fetchUserInfo = async () => {
         const data = await getReservationCustomerDetails(event.reservationId);
         if (data?.data) {
@@ -58,6 +57,9 @@ const SelectedEventModal: React.FC<EventProps> = ({
               : data.data.progressList
               ? [data.data.progressList]
               : [],
+            originalProgressList: JSON.parse(
+              JSON.stringify(data.data.progressList)
+            ), // 깊은 복사
           });
         }
       };
@@ -65,11 +67,41 @@ const SelectedEventModal: React.FC<EventProps> = ({
     }
   }, [event]);
 
+  const handleEditProgress = (progress: any) => {
+    setEditProgress(progress);
+    setProgressContent(progress.content);
+    setProgressUsedTime(progress.usedTime);
+    setShowProgressModal(true);
+  };
+
   const handleInputChange = (field: string, value: string) => {
     setUserInfo((prev: any) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleConfirmProgress = () => {
+    if (!progressContent.trim()) return;
+
+    if (editProgress) {
+      const updatedList = userInfo.progressList.map((item: any) =>
+        item.progressId === editProgress.progressId
+          ? {
+              ...item,
+              content: progressContent,
+              usedTime: Number(progressUsedTime),
+            }
+          : item
+      );
+      setUserInfo({ ...userInfo, progressList: updatedList });
+    }
+
+    // 초기화
+    setShowProgressModal(false);
+    setEditProgress(null);
+    setProgressContent("");
+    setProgressUsedTime("");
   };
 
   const refreshCalendar = async () => {
@@ -97,26 +129,42 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const handleEditSubmit = async () => {
     if (event?.mode === "edit") {
       try {
+        const originalProgressList = userInfo.originalProgressList || [];
+
+        const updatedProgressList = userInfo.progressList || [];
+
+        const modifiedProgressList = updatedProgressList.filter(
+          (updated: any) => {
+            const original = originalProgressList.find(
+              (orig: any) => orig.progressId === updated.progressId
+            );
+            return (
+              original &&
+              (original.content !== updated.content ||
+                original.usedTime !== updated.usedTime)
+            );
+          }
+        );
+
         const response = await putUpdateReservations({
           reservationId: Number(event.reservationId),
           reservationDate: userInfo?.reservationDate,
           startIndex: userInfo?.startIndex,
           endIndex: userInfo?.endIndex,
           memo: userInfo?.memo,
-          seatNumber: userInfo.seatNumber,
+          seatNumber: userInfo?.seatNumber,
           attendanceStatus: userInfo?.attendanceStatus || "NORMAL",
-          progressList: (userInfo?.progressList || []).map((p: any) => ({
+          progressList: modifiedProgressList.map((p: any) => ({
             progressId: p.progressId,
             content: p.content,
           })),
         });
 
-        console.log("✅ API 응답:", response);
-
+        console.log("✅ 예약 및 진도 수정 완료", response);
         await refreshCalendar();
         onClose();
       } catch (err) {
-        console.error("❌ API 호출 에러:", err);
+        console.error("❌ 예약 수정 실패", err);
         alert("예약 수정에 실패했습니다.");
       }
     }
@@ -131,7 +179,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
     }
   };
 
-  const [showProgressModal, setShowProgressModal] = useState(true);
+  const [showProgressModal, setShowProgressModal] = useState(false);
   const [progressContent, setProgressContent] = useState("");
   const currentDate = new Date().toISOString().split("T")[0];
 
@@ -247,7 +295,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
         {showProgressModal && (
           <div className="absolute right-[-410px] bottom-0 z-50 w-[400px] bg-white shadow-lg rounded-lg p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">진도표 추가</h2>
+              <h2 className="text-xl font-semibold">진도표 수정</h2>
               <Button
                 className="size-12"
                 onClick={() => setShowProgressModal(false)}
@@ -280,7 +328,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
               <BasicButton
                 color="primary"
                 className="w-full"
-                onClick={handleAddProgress}
+                onClick={handleConfirmProgress}
               >
                 확인
               </BasicButton>
@@ -304,6 +352,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
             handleInputChange={handleInputChange}
             handleAddIcon={handleAddIcon}
             handleDeleteProgress={handleDeleteProgress}
+            handleEditProgress={handleEditProgress}
           />
         )}
         {/* ReservationFooter */}

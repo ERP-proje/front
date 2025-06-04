@@ -39,15 +39,32 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
     return <div>회원 정보를 불러오는 중...</div>;
   }
 
+  // ✅ 공통 업데이트 함수
+  const updateProgressList = (
+    updater: (prevList: Progress[]) => Progress[]
+  ) => {
+    setProgressList((prevList) => {
+      const updatedList = updater(prevList);
+      onModify({ progressList: updatedList });
+      return updatedList;
+    });
+  };
+
   // ✅ 신규 진도 추가
 
   // ✅ 진도 내용 수정
   const updateRow = (index: number, field: keyof Progress, value: string) => {
-    const updatedList = progressList.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
+    updateProgressList((prevList) =>
+      prevList.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              [field]: value,
+              deleted: false, // 수정 시 deleted는 false
+            }
+          : item
+      )
     );
-    setProgressList(updatedList);
-    onModify({ progressList: updatedList });
   };
 
   // ✅ 진도 삭제
@@ -61,17 +78,19 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
       const isExistingProgress = prevList[index].progressId !== null;
 
       if (isExistingProgress) {
-        onModify({
-          progressList: prevList.map((item, i) =>
-            i === index ? { ...item, deleted: true } : item
-          ),
-        });
+        // 서버에 `deleted: true`를 보내야 하는 경우 (progressId가 존재하는 기존 진도)
+        return prevList.map((item, i) =>
+          i === index
+            ? {
+                ...item,
+                deleted: true, // 삭제 시 deleted는 true
+              }
+            : item
+        );
       } else {
         const updatedList = prevList.filter((_, i) => i !== index);
         onModify({ progressList: updatedList });
       }
-
-      return updatedList;
     });
   };
 
