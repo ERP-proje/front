@@ -15,6 +15,7 @@ interface Props {
   handleSelectCustomer: (customer: any) => void;
   handleInputChange: (field: string, value: string) => void;
   handleAddIcon: () => void;
+  handleEditProgress: (progress: any) => void;
   handleDeleteProgress: (progress: {
     progressId?: number;
     date: string;
@@ -27,16 +28,15 @@ export default function ReservationContent({
   setUserInfo,
   event,
   searchKeyword,
-  setSearchKeyword,
   isSearching,
   customerList,
   handleSearch,
   handleSelectCustomer,
   handleInputChange,
-  handleAddIcon,
-  handleDeleteProgress,
+  handleEditProgress,
 }: Props) {
   const [timeError, setTimeError] = useState("");
+
   return (
     <div className="flex gap-6 items-start">
       <div className="flex gap-3">
@@ -215,10 +215,42 @@ export default function ReservationContent({
 
           <div>
             <div className="text-left m-1 font-semibold">진도표</div>
-            <div
-              className="mt-2 w-[320px] h-[192px] rounded-lg border border-[#D1D1D1] bg-white p-[8px_12px] text-gray-700 text-sm leading-relaxed overflow-y-auto select-none"
-              aria-hidden="true"
-            ></div>
+            <div className="mt-2 w-[320px] h-[251px] rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto">
+              {userInfo?.progressList?.filter((p: any) => !p.deleted).length >
+              0 ? (
+                userInfo.progressList
+                  .filter((p: any) => !p.deleted)
+                  .map((p: any) => (
+                    <div
+                      key={`${p.progressId}-${p.date}`}
+                      className="w-full h-[53px] mb-2 px-[10px] py-[8px] border border-[#D1D1D1] rounded-lg flex justify-between items-start"
+                      onClick={() => handleEditProgress(p)}
+                    >
+                      <div className="flex flex-col justify-start">
+                        <div className="text-[#888888] font-semibold text-[12px] leading-[120%] mb-[4px]">
+                          {new Date(p.date).toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            weekday: "short",
+                          })}
+                        </div>
+                        <div className="text-[14px] text-black leading-[130%]">
+                          {p.content || "내용 없음"}
+                        </div>
+                      </div>
+
+                      {p.usedTime && (
+                        <div className="text-black text-[14px] font-normal font-['Inter'] leading-[120%]">
+                          {(p.usedTime * 10).toString().replace(/\.0$/, "")}H
+                        </div>
+                      )}
+                    </div>
+                  ))
+              ) : (
+                <div className="text-gray-400">진도 내역이 없습니다.</div>
+              )}
+            </div>
           </div>
         </div>
       </div>
