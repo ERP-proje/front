@@ -45,7 +45,9 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const [progressUsedTime, setProgressUsedTime] = useState(""); // 시간 입력 상태
 
   useEffect(() => {
-    if (event?.mode === "edit") {
+    if (event?.mode == "add") {
+      setUserInfo({ ...event, progressList: [] });
+    } else if (event?.mode === "edit") {
       const fetchUserInfo = async () => {
         const data = await getReservationCustomerDetails(event.reservationId);
         if (data?.data) {
@@ -59,7 +61,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
               : [],
             originalProgressList: JSON.parse(
               JSON.stringify(data.data.progressList)
-            ), // 깊은 복사
+            ),
           });
         }
       };
