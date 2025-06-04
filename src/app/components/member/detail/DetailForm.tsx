@@ -14,6 +14,7 @@ interface Progress {
   date: string;
   content: string;
   deleted?: boolean;
+  usedTime: number;
 }
 
 interface DetailFormProps {
@@ -24,7 +25,7 @@ interface DetailFormProps {
 }
 const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
   const [progressList, setProgressList] = useState<Progress[]>([
-    { progressId: null, date: "", content: "" },
+    { progressId: null, date: "", content: "", usedTime: 0 },
   ]);
 
   // ✅ 고객 데이터 변경 시, 진도 리스트도 업데이트
@@ -50,10 +51,6 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
   };
 
   // ✅ 신규 진도 추가
-  const addRow = () => {
-    const newRow = { progressId: null, date: "", content: "", deleted: false }; // 추가 시 deleted는 false
-    updateProgressList((prevList) => [newRow, ...prevList]);
-  };
 
   // ✅ 진도 내용 수정
   const updateRow = (index: number, field: keyof Progress, value: string) => {
@@ -72,7 +69,12 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
 
   // ✅ 진도 삭제
   const deleteRow = (index: number) => {
-    updateProgressList((prevList) => {
+    setProgressList((prevList) => {
+      // const updatedList = prevList.filter((_, i) => i !== index);
+
+      const updatedList = [...prevList];
+
+      // 서버에 `deleted: true`를 보내야 하는 경우 (progressId가 존재하는 기존 진도)
       const isExistingProgress = prevList[index].progressId !== null;
 
       if (isExistingProgress) {
@@ -86,8 +88,8 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
             : item
         );
       } else {
-        // 새로 추가한 항목은 실제로 삭제 (리스트에서 제거)
-        return prevList.filter((_, i) => i !== index);
+        const updatedList = prevList.filter((_, i) => i !== index);
+        onModify({ progressList: updatedList });
       }
     });
   };
@@ -197,7 +199,7 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                 <th className="border">회차</th>
                 <th className="border">날짜 선택</th>
                 <th className="border">내용</th>
-                <th className="border p-2 text-center">삭제</th>
+                <th className="border p-2 text-center">사용 시간</th>
               </tr>
             </thead>
             <tbody>
@@ -208,47 +210,13 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                     <td className="border text-center">
                       {progressList.length - index}
                     </td>
-                    <td className="border">
-                      <input
-                        type="date"
-                        value={row.date}
-                        onChange={(e) =>
-                          updateRow(index, "date", e.target.value)
-                        }
-                        className="input-content w-full border-gray-300"
-                      />
-                    </td>
-                    <td className="border p-0">
-                      <input
-                        type="text"
-                        value={row.content}
-                        placeholder="내용 입력"
-                        onChange={(e) =>
-                          updateRow(index, "content", e.target.value)
-                        }
-                        className="input-content w-full border-gray-300"
-                      />
-                    </td>
-                    <td className="border text-center">
-                      <button
-                        onClick={() => deleteRow(index)}
-                        className="text-gray-500 hover:text-red-600"
-                      >
-                        <FaTrashAlt className="w-5 h-5" />
-                      </button>
-                    </td>
+                    <td className="border">{row.date}</td>
+                    <td className="border p-0">{row.content}</td>
+                    <td className="border text-center">{row.usedTime}H</td>
                   </tr>
                 ))}
             </tbody>
           </table>
-
-          {/* ✅ 진도 추가 버튼 */}
-          <button
-            className="absolute w-8 h-8 border border-1 left-1/2 transform -translate-x-1/2 translate-y-0 text-gray-500 bg-white hover:text-[#3C6229] hover:border-[#3C6229] rounded-full shadow-md flex items-center justify-center"
-            onClick={addRow}
-          >
-            +
-          </button>
         </div>
       </div>
     </div>

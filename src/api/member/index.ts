@@ -25,7 +25,7 @@ export const memberAPI = {
   registMember: async (data: FormData) => {
     try {
       const formPayload = new FormData();
-
+      console.log("for Payload: ", formPayload);
       // ✅ req 객체에서 photoFile 제거
       const { photoFile, ...reqData } = data;
 
@@ -39,7 +39,7 @@ export const memberAPI = {
       if (photoFile && photoFile instanceof File) {
         formPayload.append("file", photoFile);
       }
-
+      console.log("formPayload : ", formPayload);
       const response = await apiClient.post(
         "api/customer/addCustomer",
         formPayload,
