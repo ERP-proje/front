@@ -23,76 +23,53 @@ interface DetailFormProps {
     updatedData: Partial<CustomerDetailData & UpdateCustomerDetail>
   ) => void;
 }
+
 const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
   const [progressList, setProgressList] = useState<Progress[]>([
     { progressId: null, date: "", content: "", usedTime: 0 },
   ]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  // ✅ 고객 데이터 변경 시, 진도 리스트도 업데이트
+  const handleEditClick = (index: number) => setEditingIndex(index);
+  const handleCompleteClick = () => setEditingIndex(null);
+
   useEffect(() => {
     if (customer?.progressList) {
       setProgressList(customer.progressList);
     }
   }, [customer?.progressList]);
 
-  if (!customer) {
-    return <div>회원 정보를 불러오는 중...</div>;
-  }
+  const updateRow = (index: number, field: keyof Progress, value: string) => {
+    const updatedList = progressList.map((item, i) =>
+      i === index
+        ? { ...item, [field]: field === "usedTime" ? +value : value }
+        : item
+    );
+    setProgressList(updatedList);
+    onModify({ progressList: updatedList });
+  };
 
-  // ✅ 공통 업데이트 함수
-  const updateProgressList = (
-    updater: (prevList: Progress[]) => Progress[]
-  ) => {
+  const deleteRow = (index: number) => {
     setProgressList((prevList) => {
-      const updatedList = updater(prevList);
-      onModify({ progressList: updatedList });
+      const updatedList = [...prevList];
+      const isExisting = updatedList[index].progressId !== null;
+
+      if (isExisting) {
+        onModify({
+          progressList: prevList.map((item, i) =>
+            i === index ? { ...item, deleted: true } : item
+          ),
+        });
+      } else {
+        const filteredList = updatedList.filter((_, i) => i !== index);
+        onModify({ progressList: filteredList });
+      }
+
       return updatedList;
     });
   };
 
-  // ✅ 신규 진도 추가
-
-  // ✅ 진도 내용 수정
-  const updateRow = (index: number, field: keyof Progress, value: string) => {
-    updateProgressList((prevList) =>
-      prevList.map((item, i) =>
-        i === index
-          ? {
-              ...item,
-              [field]: value,
-              deleted: false, // 수정 시 deleted는 false
-            }
-          : item
-      )
-    );
-  };
-
-  // ✅ 진도 삭제
-  const deleteRow = (index: number) => {
-    setProgressList((prevList) => {
-      // const updatedList = prevList.filter((_, i) => i !== index);
-
-      const updatedList = [...prevList];
-
-      // 서버에 `deleted: true`를 보내야 하는 경우 (progressId가 존재하는 기존 진도)
-      const isExistingProgress = prevList[index].progressId !== null;
-
-      if (isExistingProgress) {
-        // 서버에 `deleted: true`를 보내야 하는 경우 (progressId가 존재하는 기존 진도)
-        return prevList.map((item, i) =>
-          i === index
-            ? {
-                ...item,
-                deleted: true, // 삭제 시 deleted는 true
-              }
-            : item
-        );
-      } else {
-        const updatedList = prevList.filter((_, i) => i !== index);
-        onModify({ progressList: updatedList });
-      }
-    });
-  };
+  if (!customer) return <div>회원 정보를 불러오는 중...</div>;
 
   return (
     <div className="space-y-6 p-6">
@@ -108,7 +85,6 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
           />
         </div>
 
-        {/* 오른쪽: 입력 폼 */}
         <div className="w-2/3">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -129,9 +105,7 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                 ]}
                 defaultValue={customer.gender}
                 onChange={(value) =>
-                  onModify({
-                    gender: value === "MALE" ? "MALE" : "FEMALE",
-                  })
+                  onModify({ gender: value === "MALE" ? "MALE" : "FEMALE" })
                 }
               />
             </div>
@@ -160,59 +134,111 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
           </div>
         </div>
       </div>
+
       <div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">주소</label>
-          <input
-            type="text"
-            className="input-content w-full mb-4"
-            value={customer.address}
-            onChange={(e) => onModify({ address: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">방문 경로</label>
-          <textarea
-            className="input-content w-full"
-            value={customer.visitPath}
-            onChange={(e) => onModify({ visitPath: e.target.value })}
-          ></textarea>
-        </div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">메모</label>
-          <textarea
-            className="input-content w-full"
-            value={customer.memo}
-            onChange={(e) => onModify({ memo: e.target.value })}
-          ></textarea>
-        </div>
+        <label className="block text-sm text-gray-600 mb-1">주소</label>
+        <input
+          type="text"
+          className="input-content w-full mb-4"
+          value={customer.address}
+          onChange={(e) => onModify({ address: e.target.value })}
+        />
+        <label className="block text-sm text-gray-600 mb-1">방문 경로</label>
+        <textarea
+          className="input-content w-full mb-4"
+          value={customer.visitPath}
+          onChange={(e) => onModify({ visitPath: e.target.value })}
+        />
+        <label className="block text-sm text-gray-600 mb-1">메모</label>
+        <textarea
+          className="input-content w-full"
+          value={customer.memo}
+          onChange={(e) => onModify({ memo: e.target.value })}
+        />
       </div>
-      {/* ✅ 진도표 */}
+
       <div>
         <label className="w-full block text-sm text-gray-600 mb-1">
           진도표
         </label>
         <div className="relative">
-          <table className="w-full border text-sm mt-2 border-collapse">
+          <table className="w-full border text-sm mt-2 border-collapse table-fixed">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border">회차</th>
-                <th className="border">날짜 선택</th>
-                <th className="border">내용</th>
-                <th className="border p-2 text-center">사용 시간</th>
+                <th className="border w-12">회차</th>
+                <th className="border w-40">날짜 선택</th>
+                <th className="border w-64">내용</th>
+                <th className="border w-24">사용 시간</th>
+                <th className="border w-20">수정</th>
               </tr>
             </thead>
             <tbody>
               {progressList
-                .filter((row) => !row.deleted) // 삭제된 진도 숨김
+                .filter((row) => !row.deleted)
                 .map((row, index) => (
                   <tr key={row.progressId ?? `temp-${index}`}>
                     <td className="border text-center">
                       {progressList.length - index}
                     </td>
-                    <td className="border">{row.date}</td>
-                    <td className="border p-0">{row.content}</td>
-                    <td className="border text-center">{row.usedTime}H</td>
+                    <td className="border p-1">
+                      {editingIndex === index ? (
+                        <input
+                          type="date"
+                          className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded"
+                          value={row.date}
+                          onChange={(e) =>
+                            updateRow(index, "date", e.target.value)
+                          }
+                        />
+                      ) : (
+                        row.date
+                      )}
+                    </td>
+                    <td className="border p-1">
+                      {editingIndex === index ? (
+                        <input
+                          type="text"
+                          className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded"
+                          value={row.content}
+                          onChange={(e) =>
+                            updateRow(index, "content", e.target.value)
+                          }
+                        />
+                      ) : (
+                        row.content
+                      )}
+                    </td>
+                    <td className="border text-center p-1">
+                      {editingIndex === index ? (
+                        <input
+                          type="number"
+                          className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded text-right"
+                          value={row.usedTime}
+                          onChange={(e) =>
+                            updateRow(index, "usedTime", e.target.value)
+                          }
+                        />
+                      ) : (
+                        `${row.usedTime}H`
+                      )}
+                    </td>
+                    <td className="border text-center p-1">
+                      {editingIndex === index ? (
+                        <button
+                          className="text-green-600 font-bold"
+                          onClick={handleCompleteClick}
+                        >
+                          완료
+                        </button>
+                      ) : (
+                        <button
+                          className="text-blue-600 font-bold"
+                          onClick={() => handleEditClick(index)}
+                        >
+                          수정
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
             </tbody>
