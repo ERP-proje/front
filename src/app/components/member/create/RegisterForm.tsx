@@ -1,8 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Dropdown from "../../ui/Dropdown";
 import { FormData } from "@/types/memberType";
 import Camera from "./Camera";
+import { map } from "lodash";
+import RealtimeDropdown from "../../ui/RealtimeDropdown";
+
 export interface RegisterFormProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
@@ -45,16 +48,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               <label className="block text-sm text-gray-600 mb-1">
                 성별(필수)
               </label>
-              <Dropdown
+              <RealtimeDropdown
                 options={[
                   { label: "여", value: "FEMALE" },
                   { label: "남", value: "MALE" },
                 ]}
                 placeholder="성별"
-                defaultValue={formData.gender === "MALE" ? "남" : "여"}
+                value={formData.gender}
                 className="w-full"
-                onChange={(value) => {
-                  const mappedGender = value === "남" ? "MALE" : "FEMALE";
+                onChange={(selectedValue) => {
+                  const mappedGender = selectedValue as "MALE" | "FEMALE";
                   handleInputChange("gender", mappedGender);
                 }}
               />
