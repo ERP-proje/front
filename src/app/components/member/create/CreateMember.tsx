@@ -197,6 +197,7 @@ const CreateMember: React.FC<{
   const handleRegister = async () => {
     try {
       console.info("회원 등록 요청 데이터:", formData);
+      console.log("확인용 회원등록 " + formData);
       if (
         formData.planPayment.paymentsMethod === "OTHER" &&
         !formData.planPayment.otherPaymentMethod
