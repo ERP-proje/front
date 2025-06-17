@@ -169,7 +169,6 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                 <th className="border w-40">날짜 선택</th>
                 <th className="border w-64">내용</th>
                 <th className="border w-24">사용 시간</th>
-                <th className="border w-20">수정</th>
               </tr>
             </thead>
             <tbody>
@@ -181,63 +180,36 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
                       {progressList.length - index}
                     </td>
                     <td className="border p-1">
-                      {editingIndex === index ? (
-                        <input
-                          type="date"
-                          className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded"
-                          value={row.date}
-                          onChange={(e) =>
-                            updateRow(index, "date", e.target.value)
-                          }
-                        />
-                      ) : (
-                        row.date
-                      )}
+                      <input
+                        disabled={true}
+                        type="date"
+                        className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded"
+                        value={row.date}
+                        onChange={(e) =>
+                          updateRow(index, "date", e.target.value)
+                        }
+                      />
                     </td>
                     <td className="border p-1">
-                      {editingIndex === index ? (
-                        <input
-                          type="text"
-                          className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded"
-                          value={row.content}
-                          onChange={(e) =>
-                            updateRow(index, "content", e.target.value)
-                          }
-                        />
-                      ) : (
-                        row.content
-                      )}
+                      <input
+                        type="text"
+                        className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded"
+                        value={row.content}
+                        onChange={(e) =>
+                          updateRow(index, "content", e.target.value)
+                        }
+                      />
                     </td>
                     <td className="border text-center p-1">
-                      {editingIndex === index ? (
-                        <input
-                          type="number"
-                          className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded text-right"
-                          value={row.usedTime}
-                          onChange={(e) =>
-                            updateRow(index, "usedTime", e.target.value)
-                          }
-                        />
-                      ) : (
-                        `${row.usedTime}H`
-                      )}
-                    </td>
-                    <td className="border text-center p-1">
-                      {editingIndex === index ? (
-                        <button
-                          className="text-green-600 font-bold"
-                          onClick={handleCompleteClick}
-                        >
-                          완료
-                        </button>
-                      ) : (
-                        <button
-                          className="text-blue-600 font-bold"
-                          onClick={() => handleEditClick(index)}
-                        >
-                          수정
-                        </button>
-                      )}
+                      <input
+                        type="number"
+                        className="w-full h-8 text-sm px-2 py-1 box-border border border-gray-300 rounded text-right"
+                        value={`${row.usedTime}H`}
+                        disabled={true}
+                        onChange={(e) =>
+                          updateRow(index, "usedTime", e.target.value)
+                        }
+                      />
                     </td>
                   </tr>
                 ))}
