@@ -8,8 +8,10 @@ import MemberRow from "../components/member/list/MemberRow";
 import useCustomerStore from "@/store/useCustomerStore";
 import DetailMember from "../components/member/detail/DetailMember";
 
+export type option1Type = "ACTIVE" | "DELETED" | "INACTIVE";
 export default function Page() {
   const [searchResults, setSearchResults] = useState<any[]>([]); // 검색 결과 상태
+  const [filterOption1, setFilterOption1] = useState<option1Type>("ACTIVE");
   const { fetchCustomer } = useCustomerStore();
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null
@@ -33,7 +35,10 @@ export default function Page() {
       </div>
       {/* 메인콘텐츠 */}
       <div className="relative h-[900px] flex-[8_0_0] bg-white rounded-xl p-4 max-w-[1500px] w-full">
-        <TopControls setSearchResults={setSearchResults} />
+        <TopControls
+          setSearchResults={setSearchResults}
+          setOption1={setFilterOption1}
+        />
         <div className="relative h-[790px]">
           {/* 검색결과가 있을경우 */}
           {searchResults.length > 0 ? (
@@ -60,7 +65,7 @@ export default function Page() {
               )}
             </div>
           ) : (
-            <MemberList />
+            <MemberList selectedOption1={filterOption1} />
           )}
         </div>
       </div>

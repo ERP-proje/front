@@ -7,8 +7,15 @@ import CreateMember from "../create/CreateMember";
 import { memberAPI } from "@/api/member";
 import debounce from "lodash/debounce";
 import { FormData } from "@/types/memberType";
+import RealtimeDropdown from "../../ui/RealtimeDropdown";
 
-const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
+const TopControls = ({
+  setSearchResults,
+  setOption1,
+}: {
+  setSearchResults: any;
+  setOption1: any;
+}) => {
   const [keyword, setKeyword] = useState("");
   const [formData, setFormData] = useState<FormData>({
     planId: 0,
@@ -81,10 +88,10 @@ const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
   ];
 
   const memberStatusOptions: DropdownOption[] = [
-    { label: "이용 가능 회원 조회", value: "active" },
-    { label: "만료된 회원 조회", value: "expired" },
-    { label: "삭제된 회원 조회", value: "deleted" },
-    { label: "전체 회원 조회", value: "all" },
+    { label: "이용 가능 회원 조회", value: "ACTIVE" },
+    { label: "만료된 회원 조회", value: "INACTIVE" },
+    { label: "삭제된 회원 조회", value: "DELETED" },
+    { label: "전체 회원 조회", value: "ACTIVE" },
   ];
 
   return (
@@ -106,10 +113,19 @@ const TopControls = ({ setSearchResults }: { setSearchResults: any }) => {
         defaultValue=""
         className="ml-4 w-[180px]"
       />
-      <Dropdown
+      <RealtimeDropdown
         options={memberStatusOptions}
         placeholder="정렬 기준 선택"
-        defaultValue=""
+        onChange={(selectedValue) => {
+          const mappedGender = selectedValue as
+            | "ACTIVE"
+            | "DELETED"
+            | "EXPIRED"
+            | "ALL";
+          {
+            /*handleInputChange("gender", mappedGender);*/
+          }
+        }}
         className="ml-4 w-[200px]"
       />
       <div className="ml-auto">
