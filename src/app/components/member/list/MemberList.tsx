@@ -7,17 +7,18 @@ import DetailMember from "../detail/DetailMember";
 import useCustomerStore from "@/store/useCustomerStore";
 import usePaginatedMembers from "@/hooks/member/usePaginatedMembers";
 import MemberRowSkeleton from "./MemberRowSkeleton";
+import { option1Type } from "@/app/members/page";
 
-const MemberList = () => {
+const MemberList = ({ selectedOption1 }: { selectedOption1: option1Type }) => {
   const { fetchCustomer } = useCustomerStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
     null
   );
-
   // ✅ React Query 무한스크롤 데이터 가져오기
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    usePaginatedMembers("ACTIVE");
+    usePaginatedMembers(selectedOption1);
+
   // ✅ `data.pages`가 존재하는 경우 평탄화
   const members: Member[] =
     (data as any)?.pages?.flatMap((page: { data: any }) => page.data) || []; // ✅ pages에서 data만 추출
