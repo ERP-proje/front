@@ -18,7 +18,7 @@ function SideBar() {
     router.push("/members/");
   };
   const handleNavigateUserCalendar = () => {
-    router.push("/");
+    router.push("/reservation");
   };
   const handleNavigateReward = () => {
     router.push("/rewards/");
