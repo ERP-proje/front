@@ -247,7 +247,7 @@ export default function ReservationContent({
 
                       {p.usedTime && (
                         <div className="text-black text-[14px] font-normal font-['Inter'] leading-[120%]">
-                          {(p.usedTime * 10).toString().replace(/\.0$/, "")}H
+                          {(p.usedTime).toString().replace(/\.0$/, "")}H
                         </div>
                       )}
                     </div>
