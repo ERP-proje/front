@@ -1,3 +1,4 @@
+// tailwind.config.ts
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
@@ -8,6 +9,9 @@ const config: Config = {
       colors: {
         defaultBgColor: "hsl(96, 43%, 73%)",
         adminBgColor: "hsl(0, 0%, 100%)",
+      },
+      screens: {
+        xs: "475px",
       },
     },
   },
