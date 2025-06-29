@@ -29,7 +29,12 @@ export default function Page() {
     setSelectedCustomerId(null); // 모달 닫기 시 초기화
   };
   return (
-    <div className="flex items-center h-screen">
+    <div
+      className="flex items-center h-screen"
+      style={{
+        fontSize: "clamp(0.875rem, 0.75rem + 0.5vw, 1rem)",
+      }}
+    >
       <div className="h-full">
         <SideBar />
       </div>
