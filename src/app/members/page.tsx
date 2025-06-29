@@ -48,17 +48,7 @@ export default function Page() {
       <div className="h-full">
         <SideBar />
       </div>
-      {/* 메인 콘텐츠 영역: 
-        글씨 크기가 화면 크기에 따라 더 확확 줄어들도록 
-        다양한 브레이크포인트와 폰트 크기 클래스를 적용했습니다.
-        
-        - text-3xl: 기본 (가장 큰 화면에서 시작)
-        - xl:text-2xl: 1280px 이상
-        - lg:text-xl: 1024px 이상
-        - md:text-lg: 768px 이상
-        - sm:text-base: 640px 이상
-        - xs:text-sm: 475px 이상 (xs 브레이크포인트는 tailwind.config.ts에 정의되어야 함)
-      */}
+
       <div
         className="relative h-[900px] flex-[8_0_0] bg-white rounded-xl p-4 max-w-[1500px] w-full
                    text-3xl xl:text-2xl lg:text-xl md:text-lg sm:text-base xs:text-sm"
@@ -91,10 +81,7 @@ export default function Page() {
               )}
             </div>
           ) : (
-            <MemberList
-              selectedOption1={filterOption1}
-              setIsDataLoading={setIsDataLoading}
-            />
+            <MemberList selectedOption1={filterOption1} />
           )}
         </div>
       </div>
