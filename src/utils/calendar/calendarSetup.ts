@@ -5,8 +5,11 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayjs from "dayjs";
 import { CalendarSetupProps } from "@/types/eventType";
 import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/ko";
 
 dayjs.extend(timezone);
+
+dayjs.locale("ko");
 
 export const calendarSetup = ({
   calendarRef,
@@ -37,7 +40,7 @@ export const calendarSetup = ({
     // default basic setting
     // timeZone: "Asia/Seoul",
     // 개발 시에만 local
-    timeZone: 'local',
+    timeZone: "local",
     allDaySlot: false,
     slotMinWidth: 5,
     height: "100%",
@@ -106,7 +109,8 @@ export const calendarSetup = ({
     // Set customTitle button based on currentDate
     datesSet: (info) => {
       const currentDate = dayjs(info.view.currentStart).tz("Asia/Seoul");
-      const formatted = dayjs(currentDate).format("M월 D일");
+
+      const formatted = dayjs(currentDate).format("M월 D일 dddd");
 
       const customTitleButton = calendarRef.current?.querySelector(
         ".fc-customTitle-button.fc-button.fc-button-primary"
