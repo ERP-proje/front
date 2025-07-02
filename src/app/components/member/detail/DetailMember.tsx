@@ -1,3 +1,4 @@
+// DetailMember.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -18,6 +19,7 @@ import {
   UpdateCustomerDetail,
 } from "@/store/useCustomerStore";
 import { useQueryClient } from "@tanstack/react-query";
+
 interface DetailMemberProps {
   customerId: number;
   onClose: () => void;
@@ -29,15 +31,16 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
   const [isModified, setIsModified] = useState(false);
   const { customer, fetchCustomer, updateCustomer, updateCustomerStatus } =
     useCustomerStore();
-  // ✅ 수정용 임시 상태 추가
   const [tempCustomer, setTempCustomer] = useState<Partial<
     CustomerDetailData & { otherPayment: OtherPayment[] }
   > | null>(null);
-  const queryClient = useQueryClient(); //React Query 캐시 사용
+  const queryClient = useQueryClient();
 
   const loadCustomer = useCallback(() => {
+    setTempCustomer({ photoUrl: undefined, photoFile: undefined });
     fetchCustomer(customerId);
-  }, [customerId]);
+    console.log("받아온 정보", customer);
+  }, [customerId, fetchCustomer]);
 
   useEffect(() => {
     loadCustomer();
@@ -47,16 +50,17 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
   useEffect(() => {
     if (customer) {
       setTempCustomer((prev) => ({
-        ...prev!,
+        ...prev, // prev가 null일 수 있으므로 prev가 존재하면 스프레드, 아니면 빈 객체
         ...customer,
         customerId: customer.customerId ?? prev?.customerId ?? customerId,
         otherPayment: customer.otherPayment ?? [],
       }));
       setIsModified(false);
     }
-  }, [customer]);
+  }, [customer, customerId]); // customerId도 의존성 배열에 추가하여 customer가 변경되지 않아도 갱신될 수 있도록 합니다.
 
-  if (!tempCustomer) {
+  if (!tempCustomer || tempCustomer.customerId !== customerId) {
+    // 로딩 중이거나 customerId가 일치하지 않을 때 로딩 메시지
     return <div className="p-6 text-center">⏳ 고객 정보를 불러오는 중...</div>;
   }
 
@@ -64,7 +68,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
     setIsOpen((prev) => !prev);
   };
 
-  // ✅ 수정 핸들러
   const handleModify = (
     updatedData: Partial<CustomerDetailData & UpdateCustomerDetail>
   ) => {
@@ -76,11 +79,10 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
       progressList: Array.isArray(updatedData.progressList)
         ? updatedData.progressList
         : prev?.progressList ?? [],
-      // ✅ 기존 값 유지
       otherPayment: updatedData.otherPayment
         ? updatedData.otherPayment.map((payment, index) => ({
-            ...prev?.otherPayment?.[index], // 기존 값 유지
-            ...payment, // 변경된 값 적용
+            ...prev?.otherPayment?.[index],
+            ...payment,
           }))
         : prev?.otherPayment ?? [],
     }));
@@ -88,7 +90,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
     setIsModified(true);
   };
 
-  // ✅ 저장 핸들러
   const handleSave = async () => {
     if (!tempCustomer) return;
 
@@ -96,7 +97,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
       console.error("customerId가 없습니다.");
       return;
     }
-    // ✅ 빈 행을 필터링
     const filteredProgressList =
       tempCustomer.progressList?.filter(
         (item) => item?.date?.trim() !== "" && item?.content?.trim() !== ""
@@ -117,7 +117,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
         };
         console.log("📦 서버로 보낼 데이터:", updateData);
         await updateCustomer(updateData);
-        // ✅ 최신 데이터 다시 불러오기
         setIsModified(false);
         fetchCustomer(customerId);
         onClose();
@@ -127,12 +126,10 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
     });
   };
 
-  // ✅ 회원 삭제 핸들러
   const handleDelete = async () => {
     showAlert("정말 회원을 삭제하시겠습니까?", async () => {
       try {
         await updateCustomerStatus(customerId, "DELETED");
-        // ✅ MemberList 데이터 다시 가져오기 (React Query 캐시 무효화)
         queryClient.invalidateQueries({ queryKey: ["members", "ACTIVE"] });
         onClose();
       } catch (error) {
@@ -197,10 +194,7 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
       rightChildren={
         <div className="relative overflow-y-scroll h-full flex flex-col">
           <div className="flex-grow">
-            {/* 이용권 결제 정보 */}
-
             <PlanPaymentForm customer={tempCustomer} onModify={handleModify} />
-            {/* 기타 결제 정보 */}
             <Accordion
               title="기타 결제 내역"
               isOpen={isOpen}
@@ -212,7 +206,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                     key={index}
                     className="border p-4 rounded shadow-sm bg-gray-50"
                   >
-                    {/* 결제 내용 */}
                     <div className="mb-4">
                       <h4 className="text-sm font-bold">결제 내용</h4>
                       <input
@@ -229,7 +222,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                       />
                     </div>
 
-                    {/* 결제 금액 */}
                     <div className="mb-4">
                       <h4 className="text-sm font-bold">결제 금액</h4>
                       <input
@@ -247,7 +239,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                       />
                     </div>
 
-                    {/* 결제 방법 */}
                     <div className="mb-4">
                       <h4 className="text-sm font-bold">결제 방법</h4>
                       <div className="grid grid-cols-2 gap-2">
@@ -289,7 +280,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                       )}
                     </div>
 
-                    {/* 등록일 */}
                     <div className="mb-4">
                       <h4 className="text-sm font-bold">등록일</h4>
                       <input
@@ -306,7 +296,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                       />
                     </div>
 
-                    {/* 결제 상태 */}
                     <div
                       className="flex items-center gap-2 cursor-pointer"
                       onClick={() =>
@@ -331,7 +320,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                       </span>
                     </div>
 
-                    {/* 삭제 버튼 */}
                     <div className="mt-4">
                       <button
                         onClick={() => deletePayment(index)}
@@ -343,7 +331,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
                   </div>
                 ))}
 
-                {/* 추가 버튼 */}
                 <div className="flex justify-center mt-4">
                   <BasicButton color="gray" size="large" onClick={addPayment}>
                     기타 결제 추가
@@ -353,7 +340,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
             </Accordion>
           </div>
 
-          {/* 하단 버튼 */}
           <div className="sticky bottom-0 left-0 bg-white p-4 shadow-md flex justify-end gap-4 z-10">
             <BasicButton
               size="medium"

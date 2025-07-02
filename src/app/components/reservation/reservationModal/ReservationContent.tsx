@@ -36,7 +36,6 @@ export default function ReservationContent({
   handleEditProgress,
 }: Props) {
   const [timeError, setTimeError] = useState("");
-
   return (
     <div className="flex gap-6 items-start">
       <div className="flex gap-3">
@@ -247,7 +246,7 @@ export default function ReservationContent({
 
                       {p.usedTime && (
                         <div className="text-black text-[14px] font-normal font-['Inter'] leading-[120%]">
-                          {(p.usedTime).toString().replace(/\.0$/, "")}H
+                          {p.usedTime.toString().replace(/\.0$/, "")}H
                         </div>
                       )}
                     </div>

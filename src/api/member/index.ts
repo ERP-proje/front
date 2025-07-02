@@ -134,6 +134,7 @@ export const memberAPI = {
       const response = await apiClient.get(
         `/api/customer/getCustomerDetail/${customerId}`
       );
+      console.log("선택된 정보 : ", response.data);
       return response.data;
     } catch (error) {
       console.error("error fetching memberRow", error);
