@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { usePathname } from "next/navigation";
 import Alert from "./components/ui/Alert";
 import Providers from "./providers";
-
+import LoadingOverlay from "./components/LoadingOverlay";
 export default function RootLayout({
   children,
 }: {
@@ -20,18 +20,11 @@ export default function RootLayout({
   useEffect(() => {
     if (!isAuthenticated && pathname !== "/") {
       router.push("/");
-    } else {
     }
   }, [isAuthenticated, pathname, router]);
 
-  useEffect(() => {
-    document.body.style.backgroundColor = pathname.startsWith("/admin")
-      ? "white"
-      : "hsl(96, 43%, 73%)";
-  }, [pathname]);
-
   return (
-    <html lang="en">
+    <html lang="ko">
       <body
         style={{
           backgroundColor: pathname.startsWith("/admin")
@@ -40,9 +33,11 @@ export default function RootLayout({
         }}
         className="antialiased overflow-hidden h-screen m-0 flex items-center justify-center w-full"
       >
+        {/* NextTopLoader 제거 */}
         <main className="flex-1 w-full max-w-[1820px] h-fit">
           <Providers>{children}</Providers>
           <Alert />
+          <LoadingOverlay /> {/*LoadingOverlay를 다시 추가*/}
         </main>
       </body>
     </html>
