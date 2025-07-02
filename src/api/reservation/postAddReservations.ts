@@ -26,8 +26,12 @@ export const postAddReservations = async (userInfo: {
       console.log("예약 성공", response);
       console.log("startStr:", userInfo.startStr); // "2025-07-01T08:00"
       console.log(
-        "시간 인덱스:",
+        "startIdx:",
         timeMapping[userInfo.startStr.split("T")[1].slice(0, 5)]
+      );
+      console.log(
+        "endIdx : ",
+        timeMapping[`${userInfo?.endStr.split("T")[1].slice(0, 5)}`]
       );
     }
   } catch (error: unknown) {
