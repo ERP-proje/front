@@ -37,9 +37,6 @@ export const calendarSetup = ({
     // Set drag available
     selectable: true,
 
-    // default basic setting
-    // timeZone: "Asia/Seoul",
-    // 개발 시에만 local
     timeZone: "local",
     allDaySlot: false,
     slotMinWidth: 5,
@@ -106,7 +103,7 @@ export const calendarSetup = ({
       },
     },
 
-    // Set customTitle button based on currentDate
+    // Set customTitle buttonx` based on currentDate
     datesSet: (info) => {
       const currentDate = dayjs(info.view.currentStart).tz("Asia/Seoul");
 
@@ -115,7 +112,7 @@ export const calendarSetup = ({
       const customTitleButton = calendarRef.current?.querySelector(
         ".fc-customTitle-button.fc-button.fc-button-primary"
       );
-
+      ``;
       if (formatted && customTitleButton && currentDate) {
         customTitleButton.textContent = formatted;
         setClickedDate(dayjs(currentDate));

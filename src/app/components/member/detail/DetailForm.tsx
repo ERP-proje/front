@@ -77,7 +77,7 @@ const DetailForm: React.FC<DetailFormProps> = ({ customer, onModify }) => {
             photoUrl={
               customer.photoFile
                 ? URL.createObjectURL(customer.photoFile)
-                : customer.photoUrl
+                : customer.photoUrl ?? undefined // null or undefined면 빈 이미지로 처리됨
             }
           />
         </div>

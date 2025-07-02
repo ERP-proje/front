@@ -136,6 +136,32 @@ const useCustomerStore = create<CustomerState>((set, get) => ({
   // ✅ 고객 상세 정보 조회
   fetchCustomer: async (customerId) => {
     try {
+      set(
+        produce((state) => {
+          if (state.customer) {
+            state.customer.photoUrl = undefined;
+
+            state.customer.photoFile = undefined;
+          } else {
+            state.customer = {
+              customerId: customerId,
+              photoUrl: undefined,
+              name: "",
+              gender: "MALE",
+              birthDate: "",
+              phone: "",
+              address: "",
+              visitPath: "",
+              memo: "",
+              planPayment: {} as PlanPayment,
+              otherPayment: [],
+              progressList: [],
+            };
+          }
+        })
+      );
+      console.log("✅ photoUrl 및 photoFile 초기화 완료");
+
       const response = await apiClient.get(
         `/api/customer/getCustomerDetail/${customerId}`
       );
@@ -145,12 +171,18 @@ const useCustomerStore = create<CustomerState>((set, get) => ({
         produce((state) => {
           state.customer = {
             ...data,
-            photoFile: null, // 사진 파일 초기화
+            photoFile: undefined,
+            planPaymentStatus: data.planPayment?.status ?? false,
           };
         })
       );
     } catch (error) {
       console.error("고객 정보 조회 실패", error);
+      set(
+        produce((state) => {
+          state.customer = null;
+        })
+      );
     }
   },
 

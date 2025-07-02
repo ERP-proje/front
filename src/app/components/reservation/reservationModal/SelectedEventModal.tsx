@@ -49,6 +49,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
       setUserInfo({ ...event, progressList: [] });
     } else if (event?.mode === "edit") {
       const fetchUserInfo = async () => {
+        console.log("event.reservationId : ", event.reservationId);
         const data = await getReservationCustomerDetails(event.reservationId);
         if (data?.data) {
           setUserInfo({
@@ -272,6 +273,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
 
   const handleSelectCustomer = async (customer: any) => {
     if (customer?.customerId) {
+      console.log("handleSelectCustomer", customer?.customerId);
       const customerDetail = await memberAPI?.getCustomerDetail(
         customer?.customerId
       );
