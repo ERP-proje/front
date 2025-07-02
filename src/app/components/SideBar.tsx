@@ -1,27 +1,32 @@
 "use client";
 
 import Image from "next/image";
-
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { MdLogout } from "react-icons/md";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAlertStore } from "@/store/useAlertStore";
-
+import { useLoadingStore } from "@/store/useLoadingStore";
 function SideBar() {
   const router = useRouter();
   const { logout } = useAuthStore();
   const { showAlert } = useAlertStore();
+  const { showLoading } = useLoadingStore();
+
+  const navigateWithLoading = (path: string) => {
+    showLoading();
+    router.push(path);
+  };
 
   const handleNavigateUser = () => {
-    router.push("/members/");
+    navigateWithLoading("/members/");
   };
   const handleNavigateUserCalendar = () => {
-    router.push("/reservation");
+    navigateWithLoading("/reservation");
   };
   const handleNavigateReward = () => {
-    router.push("/rewards/");
+    navigateWithLoading("/rewards/");
   };
 
   const pathname = usePathname()?.split("/")[1];

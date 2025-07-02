@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideBar from "../components/SideBar";
 import TopControls from "../components/member/list/TopControls";
 import MemberList from "../components/member/list/MemberList";
 import MemberRow from "../components/member/list/MemberRow";
 import useCustomerStore from "@/store/useCustomerStore";
 import DetailMember from "../components/member/detail/DetailMember";
+import { useLoadingStore } from "@/store/useLoadingStore";
 
 export type option1Type = "ACTIVE" | "DELETED" | "INACTIVE";
+
 export default function Page() {
-  const [searchResults, setSearchResults] = useState<any[]>([]); // 검색 결과 상태
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [filterOption1, setFilterOption1] = useState<option1Type>("ACTIVE");
   const { fetchCustomer } = useCustomerStore();
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
@@ -18,16 +20,23 @@ export default function Page() {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { hideLoading } = useLoadingStore();
+  useEffect(() => {
+    hideLoading();
+  }, [hideLoading]);
+
   const handleRowClick = (customerId: number) => {
     console.log("선택된 customerId:", customerId);
-    fetchCustomer(customerId); // Zustand에서 API 호출
+    fetchCustomer(customerId);
     setSelectedCustomerId(customerId);
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedCustomerId(null); // 모달 닫기 시 초기화
   };
+
   return (
     <div
       className="flex items-center h-screen"
@@ -48,14 +57,14 @@ export default function Page() {
           {/* 검색결과가 있을경우 */}
           {searchResults.length > 0 ? (
             <div className="grid grid-cols-1 rounded-xl gap-2 p-4 border border-gray-300 h-full overflow-y-auto">
-              {searchResults.map((member, customerId) => (
+              {searchResults.map((member, index) => (
                 <MemberRow
-                  key={customerId}
+                  key={member.customerId}
                   member={member}
                   onClick={() => handleRowClick(member.customerId)}
                 />
               ))}
-              {/* 모달 */}
+              {/* 모달은 그대로 유지 */}
               {isModalOpen && selectedCustomerId && (
                 <>
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -70,7 +79,10 @@ export default function Page() {
               )}
             </div>
           ) : (
-            <MemberList selectedOption1={filterOption1} />
+            <MemberList
+              selectedOption1={filterOption1}
+              onDataLoaded={hideLoading}
+            />
           )}
         </div>
       </div>
