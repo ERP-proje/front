@@ -119,7 +119,10 @@ const SelectedEventModal: React.FC<EventProps> = ({
       const response = await postAddReservations({
         ...userInfo,
         customerId: userInfo.customerId,
+        startIndex: userInfo.startIndex,
+        endIndex: userInfo.endIndex,
       });
+      console.log("보낼 정보 : ", userInfo);
       setTimeout(async () => {
         await refreshCalendar();
       }, 1000);
