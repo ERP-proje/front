@@ -8,6 +8,7 @@ import { MdLogout } from "react-icons/md";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAlertStore } from "@/store/useAlertStore";
 import { useLoadingStore } from "@/store/useLoadingStore";
+
 function SideBar() {
   const router = useRouter();
   const { logout } = useAuthStore();
@@ -17,6 +18,7 @@ function SideBar() {
   const navigateWithLoading = (path: string) => {
     showLoading();
     router.push(path);
+    router.refresh();
   };
 
   const handleNavigateUser = () => {

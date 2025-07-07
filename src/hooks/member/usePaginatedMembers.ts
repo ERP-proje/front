@@ -2,46 +2,52 @@ import apiClient from "@/api/core/apiClient";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Member } from "@/types/memberType";
 
-// ✅ API 응답 타입 정의
 interface MemberListResponse {
-  data: Member[]; // `data` 속성 포함
+  data: Member[];
 }
 
-// ✅ API에서 회원 목록을 가져오는 함수
 const fetchMemberList = async ({
-  pageParam = null,
+  pageParam,
   status,
 }: {
   pageParam: number | null;
   status: "ACTIVE" | "INACTIVE" | "DELETED";
 }): Promise<MemberListResponse> => {
-  const response = await apiClient.get("/api/customer/getCustomers", {
-    params: {
-      status,
-      ...(pageParam ? { lastId: pageParam } : {}),
-    },
-  });
+  const response = await apiClient.get<MemberListResponse>(
+    "/api/customer/getCustomers",
+    {
+      params: {
+        status,
+        ...(pageParam !== null ? { lastId: pageParam } : {}),
+      },
+    }
+  );
 
-  return response.data; // ✅ API 응답 구조 유지
+  return response.data;
 };
 
-// ✅ useInfiniteQuery를 활용한 무한스크롤 훅
 const usePaginatedMembers = (status: "ACTIVE" | "INACTIVE" | "DELETED") => {
   return useInfiniteQuery<
-    MemberListResponse, // ✅ API 응답 타입
-    Error, // ✅ 에러 타입
-    MemberListResponse, // ✅ `TQueryFnData` → 정확한 타입 적용
-    ["members", "ACTIVE" | "INACTIVE" | "DELETED"], // ✅ `TQueryKey`
-    number | null // ✅ `TPageParam`
+    MemberListResponse,
+    Error,
+    MemberListResponse,
+    ["members", "status", typeof status],
+    number | null
   >({
-    queryKey: ["members", status], // ✅ 상태별로 다른 캐시 사용
-    queryFn: async ({ pageParam = null }) =>
-      fetchMemberList({ pageParam, status }),
-    initialPageParam: null, // ✅ 초기 페이지 파라미터 설정 (필수)
+    queryKey: ["members", "status", status],
+    queryFn: async ({ pageParam }) => fetchMemberList({ pageParam, status }),
+    initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (!lastPage || lastPage.data.length < 20) return null; // ✅ lastPage.data.length 사용
-      return lastPage.data[lastPage.data.length - 1].customerId; // ✅ 마지막 요소 선택
+      if (!lastPage || lastPage.data.length === 0) {
+        return null;
+      }
+      if (lastPage.data.length < 20) {
+        // 한 페이지당 20개 데이터 기준
+        return null;
+      }
+      return lastPage.data[lastPage.data.length - 1].customerId;
     },
+    staleTime: 5 * 60 * 1000,
   });
 };
 
