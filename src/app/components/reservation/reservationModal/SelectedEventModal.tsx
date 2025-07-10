@@ -43,6 +43,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const [userInfo, setUserInfo] = useState<any>(null);
   const [editProgress, setEditProgress] = useState<any>(null);
   const [progressUsedTime, setProgressUsedTime] = useState(""); // 시간 입력 상태
+  const [isInput, setIsInput] = useState(false); //진도표 수정에 값 입력 여부
 
   useEffect(() => {
     if (event?.mode == "add") {
@@ -294,7 +295,9 @@ const SelectedEventModal: React.FC<EventProps> = ({
       setCustomerList([]);
     }
   };
-
+  useEffect(() => {
+    setIsInput(!progressContent?.trim());
+  }, [progressContent]);
   return (
     <>
       <div className="flex flex-col">
@@ -326,7 +329,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
               type="text"
               className="w-full h-[80px] p-2 border bg-[#F2F8ED] border-[#B4D89C] rounded-lg"
               placeholder="진도표 내용을 입력하세요"
-              value={progressContent}
+              value={progressContent ?? ""}
               onChange={(e) => setProgressContent(e.target.value)}
             />
 
@@ -334,8 +337,12 @@ const SelectedEventModal: React.FC<EventProps> = ({
             <div className="flex justify-center mt-4">
               <BasicButton
                 color="primary"
-                className="w-full"
+                // Conditionally apply gray background and 'not-allowed' cursor when disabled
+                className={`w-full ${
+                  isInput ? "bg-gray-400 cursor-not-allowed" : ""
+                }`}
                 onClick={handleConfirmProgress}
+                disabled={isInput} // Disable the button based on the isInput state
               >
                 확인
               </BasicButton>
