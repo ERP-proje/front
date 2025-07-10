@@ -7,17 +7,21 @@ import {
 } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Calendar } from "@fullcalendar/core";
-
+import { SelectedRangeId } from "@/types/eventType";
 interface ReservationModalProps {
   selectedEvent: any;
   onClose: () => void;
   calendarInstance: React.MutableRefObject<Calendar | null>;
+  setSelectedRangeId: React.Dispatch<
+    React.SetStateAction<SelectedRangeId | null>
+  >;
 }
 
 const ReservationModal: React.FC<ReservationModalProps> = ({
   selectedEvent,
   onClose,
   calendarInstance,
+  setSelectedRangeId,
 }) => {
   return (
     <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && onClose()}>

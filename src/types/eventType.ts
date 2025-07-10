@@ -29,3 +29,8 @@ export interface CalendarSetupProps {
   setSelectedEvent: React.Dispatch<React.SetStateAction<SelectedEvent | null>>;
   now: Dayjs;
 }
+
+export interface SelectedRangeId {
+  formattedStartTime: string | null;
+  formattedEndTime: string | null;
+}

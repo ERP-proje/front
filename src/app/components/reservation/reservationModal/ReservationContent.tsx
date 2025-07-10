@@ -215,9 +215,7 @@ export default function ReservationContent({
           <div>
             <div className="text-left m-1 font-semibold">진도표</div>
             <div
-              className={`mt-2 w-[320px] rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto ${
-                event?.mode === "edit" ? "h-[251px]" : "min-h-[180px]"
-              }`}
+              className={`mt-2 w-[320px] rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto max-h-[250px] min-h-[180px]`}
             >
               {userInfo?.progressList?.filter((p: any) => !p.deleted).length >
               0 ? (
