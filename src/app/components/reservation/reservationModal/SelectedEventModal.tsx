@@ -72,6 +72,8 @@ const SelectedEventModal: React.FC<EventProps> = ({
   }, [event]);
 
   const handleEditProgress = (progress: any) => {
+    console.log("progress: ", progress);
+    setClickedDate(progress.date);
     setEditProgress(progress);
     setProgressContent(progress.content);
     setProgressUsedTime(progress.usedTime);
@@ -166,7 +168,6 @@ const SelectedEventModal: React.FC<EventProps> = ({
             content: p.content,
           })),
         });
-
         console.log("✅ 예약 및 진도 수정 완료", response);
         await refreshCalendar();
         onClose();
@@ -189,6 +190,8 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [progressContent, setProgressContent] = useState("");
   const currentDate = new Date().toISOString().split("T")[0];
+
+  const [clickedDate, setClickedDate] = useState(currentDate);
 
   const handleAddIcon = () => {
     setShowProgressModal(true);
@@ -321,7 +324,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
 
             {/* 진도표 날짜 */}
             <div className="mb-4 p-2 border bg-[#F6F6F6] border-[#D1D1D1] rounded-lg text-center">
-              {currentDate}
+              {clickedDate}
             </div>
 
             {/* 진도표 내용 입력 필드 */}

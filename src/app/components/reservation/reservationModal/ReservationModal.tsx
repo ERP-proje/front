@@ -8,6 +8,7 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Calendar } from "@fullcalendar/core";
 import { SelectedRangeId } from "@/types/eventType";
+import { useEffect } from "react";
 interface ReservationModalProps {
   selectedEvent: any;
   onClose: () => void;
@@ -23,6 +24,11 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   calendarInstance,
   setSelectedRangeId,
 }) => {
+  useEffect(() => {
+    console.log("event : ", selectedEvent);
+    console.log("onClose: ", onclose);
+    console.log("calenderInstatce : ", calendarInstance);
+  }, []);
   return (
     <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50 z-40" />
