@@ -18,6 +18,9 @@ export const calendarSetup = ({
   setShowMiniCalendar,
   setSelectedEvent,
   now,
+  startTime,
+  endTime,
+  totalSeatsObj,
 }: CalendarSetupProps) => {
   if (!calendarRef.current) return null;
 
@@ -28,8 +31,8 @@ export const calendarSetup = ({
     // Set library plugins and initial View
     plugins: [resourceTimeGridPlugin, dayGridPlugin, interactionPlugin],
     initialView: "resourceTimeGridDay",
-    slotMinTime: "08:00:00",
-    slotMaxTime: "22:59:59",
+    slotMinTime: startTime,
+    slotMaxTime: endTime,
     slotDuration: "00:30:00",
     scrollTime: currentTime,
     expandRows: true,
@@ -44,12 +47,8 @@ export const calendarSetup = ({
     slotEventOverlap: false,
 
     // Set calendar resources
-    resources: [
-      { id: "1", title: "1" },
-      { id: "2", title: "2" },
-      { id: "3", title: "3" },
-      { id: "4", title: "4" },
-    ],
+
+    resources: totalSeatsObj,
 
     // Set event items
     events: [],
