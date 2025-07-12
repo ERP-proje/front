@@ -11,10 +11,16 @@ function Reservation({
   setSelectedEvent,
   calendarRef,
   calendarInstance,
+  totalSeats,
+  startTime,
+  endTime,
 }: {
   setSelectedEvent: React.Dispatch<React.SetStateAction<SelectedEvent | null>>;
   calendarRef: React.MutableRefObject<HTMLDivElement | null>;
   calendarInstance: React.MutableRefObject<Calendar | null>;
+  totalSeats: number | null;
+  startTime: string | null;
+  endTime: string | null;
 }) {
   const now = dayjs();
   const [showMiniCalendar, setShowMiniCalendar] = useState(false);
@@ -22,7 +28,11 @@ function Reservation({
   const nowDate = clickedDate?.format("YYYY-MM-DD");
 
   useEffect(() => {
-    if (calendarRef.current) {
+    if (calendarRef.current && startTime && endTime && totalSeats) {
+      const totalSeatsObj = Array.from({ length: totalSeats }, (_, i) => ({
+        id: (i + 1).toString(),
+        title: (i + 1).toString(),
+      }));
       calendarInstance.current = calendarSetup({
         calendarRef,
         clickedDate,
@@ -30,7 +40,13 @@ function Reservation({
         setShowMiniCalendar,
         setSelectedEvent,
         now,
+        startTime,
+        endTime,
+        totalSeatsObj,
       });
+      console.log("in reservation.tsx");
+      console.log(startTime, endTime, totalSeats);
+      console.log(totalSeatsObj);
     }
 
     return () => {
@@ -39,7 +55,14 @@ function Reservation({
         calendarInstance.current = null;
       }
     };
-  }, [calendarRef, calendarInstance, setSelectedEvent]);
+  }, [
+    calendarRef,
+    calendarInstance,
+    setSelectedEvent,
+    startTime,
+    endTime,
+    totalSeats,
+  ]);
 
   useEffect(() => {
     if (calendarInstance.current) {

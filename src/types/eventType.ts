@@ -28,6 +28,9 @@ export interface CalendarSetupProps {
   setShowMiniCalendar: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedEvent: React.Dispatch<React.SetStateAction<SelectedEvent | null>>;
   now: Dayjs;
+  startTime: string | null;
+  endTime: string | null;
+  totalSeatsObj: object;
 }
 
 export interface SelectedRangeId {
