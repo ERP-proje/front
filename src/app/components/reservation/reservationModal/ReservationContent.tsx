@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { handleTimeInputChange } from "@/utils/reservation/handleTimeInputChange";
 import { putUpdateReservations } from "@/api/reservation/putUpdateReservations";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import _ from "lodash";
 
 interface Props {
   userInfo: any;
@@ -21,6 +22,8 @@ interface Props {
     date: string;
     content: string;
   }) => void;
+  setStartTime: (startTime: string) => void;
+  setEndTime: (endTime: string) => void;
 }
 
 export default function ReservationContent({
@@ -34,8 +37,19 @@ export default function ReservationContent({
   handleSelectCustomer,
   handleInputChange,
   handleEditProgress,
+  setStartTime,
+  setEndTime,
 }: Props) {
   const [timeError, setTimeError] = useState("");
+  const [isValid, setIsValid] = useState<boolean>(true);
+
+  useEffect(() => {
+    console.log("isValid : ", isValid);
+  }, [isValid, setIsValid]);
+  useEffect(() => {
+    setStartTime(userInfo?.formattedStartTime);
+    setEndTime(userInfo?.formattedEndTime);
+  }, []);
   return (
     <div className="flex gap-6 items-start">
       <div className="flex gap-3">
@@ -62,14 +76,17 @@ export default function ReservationContent({
               maxLength={5}
               value={userInfo?.formattedStartTime || ""}
               placeholder="--:--"
-              onChange={(e) =>
+              onChange={(e) => {
                 handleTimeInputChange(
                   e.target.value,
                   "start",
                   setUserInfo,
-                  setTimeError
-                )
-              }
+                  setTimeError,
+                  setIsValid,
+                  setStartTime,
+                  isValid
+                );
+              }}
             />
             <div className="font-light p-2 min-h-7">~</div>
             <input
@@ -83,7 +100,10 @@ export default function ReservationContent({
                   e.target.value,
                   "end",
                   setUserInfo,
-                  setTimeError
+                  setTimeError,
+                  setIsValid,
+                  setEndTime,
+                  isValid
                 )
               }
             />

@@ -1,6 +1,5 @@
 import apiClient from "../core/apiClient";
 import errorHandler from "../core/errorHandler";
-import { timeMapping } from "@/utils/reservation/timeMapping";
 
 export const putUpdateReservations = async (data: {
   reservationId: number;

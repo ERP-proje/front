@@ -8,15 +8,14 @@ export const postAddReservations = async (userInfo: {
   resourceId: number;
   memo: string;
   customerId: number;
+  eventdate: string;
 }) => {
   try {
-    console.log(userInfo);
     const response = await apiClient.post("/api/reservation/addReservation", {
       customerId: userInfo.customerId,
-      reservationDate: userInfo.startStr.split("T")[0],
-      startIndex:
-        timeMapping[`${userInfo?.startStr.split("T")[1].slice(0, 5)}`],
-      endIndex: timeMapping[`${userInfo?.endStr.split("T")[1].slice(0, 5)}`],
+      reservationDate: userInfo.eventdate,
+      startIndex: userInfo.startStr,
+      endIndex: userInfo.endStr,
       resourceId: userInfo.resourceId,
       memo: userInfo.memo,
       seatNumber: userInfo.resourceId,
@@ -24,15 +23,6 @@ export const postAddReservations = async (userInfo: {
 
     if (response.status === 200) {
       console.log("예약 성공", response);
-      console.log("startStr:", userInfo.startStr); // "2025-07-01T08:00"
-      console.log(
-        "startIdx:",
-        timeMapping[userInfo.startStr.split("T")[1].slice(0, 5)]
-      );
-      console.log(
-        "endIdx : ",
-        timeMapping[`${userInfo?.endStr.split("T")[1].slice(0, 5)}`]
-      );
     }
   } catch (error: unknown) {
     const errorMessage = errorHandler(error);
