@@ -18,6 +18,7 @@ import ReservationHeader from "./ReservationHeader";
 import ReservationContent from "./ReservationContent";
 import ReservationFooter from "./ReservationFooter";
 
+import { timeMapping } from "@/utils/reservation/timeMapping";
 interface EventProps {
   event: {
     startTime: string;
@@ -44,7 +45,12 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const [editProgress, setEditProgress] = useState<any>(null);
   const [progressUsedTime, setProgressUsedTime] = useState(""); // 시간 입력 상태
   const [isInput, setIsInput] = useState(false); //진도표 수정에 값 입력 여부
-
+  const [startTime, setStartTime] = useState<string>();
+  const [endTime, setEndTime] = useState<string>();
+  useEffect(() => {
+    console.log("startTime: ", startTime);
+    console.log("endTime: ", endTime);
+  }, [startTime, setStartTime, endTime, setEndTime]);
   useEffect(() => {
     if (event?.mode == "add") {
       setUserInfo({ ...event, progressList: [] });
@@ -112,6 +118,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
 
   const refreshCalendar = async () => {
     const eventDate = event?.startStr ? event.startStr.split("T")[0] : "";
+
     if (eventDate && calendarInstance) {
       await loadReservation(eventDate, calendarInstance);
     }
@@ -122,10 +129,10 @@ const SelectedEventModal: React.FC<EventProps> = ({
       const response = await postAddReservations({
         ...userInfo,
         customerId: userInfo.customerId,
-        startIndex: userInfo.startIndex,
-        endIndex: userInfo.endIndex,
+        startStr: timeMapping[`${startTime}`],
+        endStr: timeMapping[`${endTime}`],
+        eventdate: event?.startStr ? event.startStr.split("T")[0] : "",
       });
-      console.log("보낼 정보 : ", userInfo);
       setTimeout(async () => {
         await refreshCalendar();
       }, 1000);
@@ -158,8 +165,8 @@ const SelectedEventModal: React.FC<EventProps> = ({
         const response = await putUpdateReservations({
           reservationId: Number(event.reservationId),
           reservationDate: userInfo?.reservationDate,
-          startIndex: userInfo?.startIndex,
-          endIndex: userInfo?.endIndex,
+          startIndex: timeMapping[`${startTime}`],
+          endIndex: timeMapping[`${endTime}`],
           memo: userInfo?.memo,
           seatNumber: userInfo?.seatNumber,
           attendanceStatus: userInfo?.attendanceStatus || "NORMAL",
@@ -370,6 +377,8 @@ const SelectedEventModal: React.FC<EventProps> = ({
             handleAddIcon={handleAddIcon}
             handleDeleteProgress={handleDeleteProgress}
             handleEditProgress={handleEditProgress}
+            setStartTime={setStartTime}
+            setEndTime={setEndTime}
           />
         )}
         {/* ReservationFooter */}
