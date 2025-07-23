@@ -310,14 +310,19 @@ const SelectedEventModal: React.FC<EventProps> = ({
   }, [progressContent]);
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         {/* 진도표 추가 모달 */}
         {showProgressModal && (
-          <div className="absolute right-[-410px] bottom-0 z-50 w-[400px] bg-white shadow-lg rounded-lg p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">진도표 수정</h2>
+          <div
+            className={`
+              z-50 p-4 sm:p-6 rounded-lg bg-white shadow-lg
+              w-full max-w-[400px] sm:absolute sm:right-0 sm:bottom-0
+            `}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg sm:text-xl font-semibold">진도표 수정</h2>
               <Button
-                className="size-12"
+                className="w-8 h-8 sm:size-12"
                 onClick={() => setShowProgressModal(false)}
               >
                 <Image
@@ -330,14 +335,14 @@ const SelectedEventModal: React.FC<EventProps> = ({
             </div>
 
             {/* 진도표 날짜 */}
-            <div className="mb-4 p-2 border bg-[#F6F6F6] border-[#D1D1D1] rounded-lg text-center">
+            <div className="mb-4 p-2 border bg-[#F6F6F6] border-[#D1D1D1] rounded-lg text-center text-sm sm:text-base">
               {clickedDate}
             </div>
 
             {/* 진도표 내용 입력 필드 */}
             <input
               type="text"
-              className="w-full h-[80px] p-2 border bg-[#F2F8ED] border-[#B4D89C] rounded-lg"
+              className="w-full h-[80px] p-2 border bg-[#F2F8ED] border-[#B4D89C] rounded-lg text-sm sm:text-base"
               placeholder="진도표 내용을 입력하세요"
               value={progressContent ?? ""}
               onChange={(e) => setProgressContent(e.target.value)}
@@ -347,40 +352,44 @@ const SelectedEventModal: React.FC<EventProps> = ({
             <div className="flex justify-center mt-4">
               <BasicButton
                 color="primary"
-                // Conditionally apply gray background and 'not-allowed' cursor when disabled
                 className={`w-full ${
                   isInput ? "bg-gray-400 cursor-not-allowed" : ""
                 }`}
                 onClick={handleConfirmProgress}
-                disabled={isInput} // Disable the button based on the isInput state
+                disabled={isInput}
               >
                 확인
               </BasicButton>
             </div>
           </div>
         )}
+
         {/* ReservationHeader */}
         {event && <ReservationHeader mode={event?.mode} onClose={onClose} />}
+
         {/* ReservationContent */}
         {userInfo && (
-          <ReservationContent
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
-            event={event}
-            searchKeyword={searchKeyword}
-            setSearchKeyword={setSearchKeyword}
-            isSearching={isSearching}
-            customerList={customerList}
-            handleSearch={handleSearch}
-            handleSelectCustomer={handleSelectCustomer}
-            handleInputChange={handleInputChange}
-            handleAddIcon={handleAddIcon}
-            handleDeleteProgress={handleDeleteProgress}
-            handleEditProgress={handleEditProgress}
-            setStartTime={setStartTime}
-            setEndTime={setEndTime}
-          />
+          <div className="w-full overflow-x-hidden">
+            <ReservationContent
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+              event={event}
+              searchKeyword={searchKeyword}
+              setSearchKeyword={setSearchKeyword}
+              isSearching={isSearching}
+              customerList={customerList}
+              handleSearch={handleSearch}
+              handleSelectCustomer={handleSelectCustomer}
+              handleInputChange={handleInputChange}
+              handleAddIcon={handleAddIcon}
+              handleDeleteProgress={handleDeleteProgress}
+              handleEditProgress={handleEditProgress}
+              setStartTime={setStartTime}
+              setEndTime={setEndTime}
+            />
+          </div>
         )}
+
         {/* ReservationFooter */}
         {event && (
           <ReservationFooter

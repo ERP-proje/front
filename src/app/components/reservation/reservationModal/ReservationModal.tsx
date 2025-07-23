@@ -27,7 +27,11 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   return (
     <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && onClose()}>
       <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50 z-40" />
-      <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white p-6 rounded-xl shadow-lg border-0 flex max-w-auto">
+      <DialogContent
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 
+             bg-white p-6 rounded-xl shadow-lg border-0 flex 
+             w-[90vw] max-w-[800px] max-h-[90vh] overflow-auto"
+      >
         <DialogTitle>
           <VisuallyHidden>숨겨진 제목</VisuallyHidden>
         </DialogTitle>

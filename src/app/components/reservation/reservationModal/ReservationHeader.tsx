@@ -10,16 +10,17 @@ export default function ReservationHeader({ mode, onClose }: Props) {
   return (
     <div className="flex justify-between items-center mb-2">
       {/* Modal title */}
-      <div className="text-xl font-semibold">
+      <div className="text-base sm:text-lg md:text-xl font-semibold">
         {mode === "add" ? "예약 추가" : "예약 수정"}
       </div>
       {/* Modal close button */}
-      <Button className="size-12" onClick={onClose}>
+      <Button className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 p-1">
         <Image
           src="/reservationModal/closeIcon.png"
           width={100}
           height={100}
           alt="closeIcon"
+          className="w-full h-full object-contain"
         />
       </Button>
     </div>
