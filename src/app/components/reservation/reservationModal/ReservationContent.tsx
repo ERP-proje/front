@@ -51,12 +51,7 @@ export default function ReservationContent({
     setEndTime(userInfo?.formattedEndTime);
   }, []);
   return (
-    // Main container: Ensure minimal padding and allow wrapping.
-    // Changed md:flex-row to sm:flex-row for an earlier horizontal layout, if desired.
-    // Added min-w-0 to the main flex container to allow it to shrink.
     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start w-full min-w-0 mx-auto p-2">
-      {/* Left column: User photo and Basic Info */}
-      {/* Ensure this column can shrink as well if needed. */}
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-[1.6] min-w-0">
         {/* User photo */}
         <div className="justify-center mx-auto sm:m-1 size-24 sm:size-32 flex-shrink-0">
@@ -68,9 +63,6 @@ export default function ReservationContent({
             className="w-full h-full object-cover rounded-full"
           />
         </div>
-
-        {/* basic info */}
-        {/* Changed md:max-w-[250px] to just max-w-full on smaller screens, and let flex-grow handle it. */}
         <div className="flex flex-col mx-2 w-full max-h-[600px] overflow-y-auto space-y-2 text-sm md:text-base flex-1 min-w-0">
           <div className="flex justify-between text-left m-1 font-semibold text-base md:text-lg">
             예약 시간
@@ -244,9 +236,6 @@ export default function ReservationContent({
           )}
         </div>
       </div>
-
-      {/* Right column: Member Memo and Progress List */}
-      {/* Changed md:w-[320px] to flex-1 and min-w-0 to allow it to shrink. */}
       <div className="flex flex-col gap-4 w-full flex-1 min-w-0">
         <div className="w-full">
           <div className="text-left m-1 font-semibold text-base md:text-lg">
