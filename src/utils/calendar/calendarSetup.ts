@@ -28,7 +28,6 @@ export const calendarSetup = ({
   console.log("clickedDate", clickedDate);
 
   const calendar = new Calendar(calendarRef.current, {
-    // Set library plugins and initial View
     plugins: [resourceTimeGridPlugin, dayGridPlugin, interactionPlugin],
     initialView: "resourceTimeGridDay",
     slotMinTime: startTime,
@@ -37,7 +36,6 @@ export const calendarSetup = ({
     scrollTime: currentTime,
     expandRows: true,
 
-    // Set drag available
     selectable: true,
 
     timeZone: "local",
@@ -46,15 +44,10 @@ export const calendarSetup = ({
     height: "100%",
     slotEventOverlap: false,
 
-    // Set calendar resources
-
     resources: totalSeatsObj,
-
-    // Set event items
     events: [],
     eventTextColor: "#000000",
 
-    // Set event click Callback
     eventClick: function (info) {
       const eventObj = info.event;
       console.log("eventObj", eventObj);
@@ -70,10 +63,8 @@ export const calendarSetup = ({
       });
     },
 
-    // Set drag Callback
     select: function (info) {
       const resourceId = info.resource?.id;
-
       const newEvent = {
         startStr: dayjs(info.start).format("YYYY-MM-DDTHH:mm:ss"),
         endStr: dayjs(info.end).format("YYYY-MM-DDTHH:mm:ss"),
@@ -88,12 +79,14 @@ export const calendarSetup = ({
       setSelectedEvent(newEvent);
     },
 
-    // default design setting
     nowIndicator: true,
     headerToolbar: {
       left: "",
-      center: "prev, customTitle, next",
+      center: "prev, customTitle, next,today",
       right: "",
+    },
+    buttonText: {
+      today: "오늘",
     },
     customButtons: {
       customTitle: {
@@ -101,17 +94,12 @@ export const calendarSetup = ({
         click: () => setShowMiniCalendar((prev) => !prev),
       },
     },
-
-    // Set customTitle buttonx` based on currentDate
     datesSet: (info) => {
       const currentDate = dayjs(info.view.currentStart).tz("Asia/Seoul");
-
       const formatted = dayjs(currentDate).format("M월 D일 dddd");
-
       const customTitleButton = calendarRef.current?.querySelector(
         ".fc-customTitle-button.fc-button.fc-button-primary"
       );
-      ``;
       if (formatted && customTitleButton && currentDate) {
         customTitleButton.textContent = formatted;
         setClickedDate(dayjs(currentDate));

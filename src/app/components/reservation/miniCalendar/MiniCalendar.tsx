@@ -48,6 +48,103 @@ function MiniCalendar({ onDateClick }: MiniCalendarProps) {
       calendar.render();
     }
   }, [onDateClick]);
+  const MiniCalendarWrapper = styled.div`
+    #calendar {
+      max-width: 100%;
+      background-color: #f6f6f6;
+      font-size: 10px;
+      padding: 0px;
+      width: 250px;
+      height: 210px;
+    }
+
+    .fc-theme-standard {
+      padding: 10px;
+      border-radius: 10px;
+      box-sizing: border-box;
+      z-index: 100;
+    }
+
+    .fc-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .fc-toolbar-chunk {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .fc-toolbar-title {
+      font-size: 12px;
+    }
+
+    /* 모든 주요 버튼(prev, next 등)의 기본 스타일 */
+    .fc .fc-button-primary {
+      background-color: transparent;
+      border: none;
+      color: #000000;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 5px;
+    }
+
+    .fc-toolbar-chunk .fc-today-button.fc-button-primary {
+      background-color: #3c6229;
+      color: white;
+      font-weight: bold;
+      border-radius: 15px;
+      padding: 4px 10px;
+      font-size: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        background-color: #2d4c1f;
+        color: white;
+      }
+    }
+
+    .fc-daygrid-body {
+      background-color: #ffffff;
+    }
+
+    .fc-daygrid-day-frame {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      height: 100%;
+      font-size: 10px;
+      background-color: white;
+    }
+
+    .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
+      background-color: #b4d89c !important;
+      border-radius: 50%;
+    }
+
+    .fc-button:empty {
+      display: none;
+    }
+
+    .fc .fc-scrollgrid-sync-inner {
+      background-color: #ffffff;
+    }
+
+    .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
+      background-color: #f6f6f6;
+      font-weight: 400;
+    }
+
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+      border: none;
+    }
+  `;
 
   return (
     <MiniCalendarWrapper>
@@ -57,82 +154,3 @@ function MiniCalendar({ onDateClick }: MiniCalendarProps) {
 }
 
 export default MiniCalendar;
-
-const MiniCalendarWrapper = styled.div`
-  #calendar {
-    max-width: 100%;
-    background-color: #f6f6f6;
-    font-size: 10px;
-    padding: 0px;
-    width: 250px;
-    height: 210px;
-  }
-
-  .fc-theme-standard {
-    padding: 10px;
-    border-radius: 10px;
-    box-sizing: border-box;
-    z-index: 100;
-  }
-
-  .fc-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-  }
-
-  .fc-toolbar-chunk {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .fc-toolbar-title {
-    font-size: 12px;
-  }
-
-  .fc .fc-button-primary {
-    background-color: #f6f6f6;
-    border-color: None;
-    color: #000000;
-  }
-
-  .fc-daygrid-body {
-    background-color: #ffffff;
-  }
-
-  .fc-daygrid-day-frame {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    height: 100%;
-    font-size: 10px;
-    background-color: white;
-  }
-
-  .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
-    background-color: #b4d89c !important;
-    border-radius: 50%;
-    // border: 2px solid #000000;
-  }
-
-  .fc-button:empty {
-    display: none;
-  }
-
-  .fc .fc-scrollgrid-sync-inner {
-    background-color: #ffffff;
-  }
-
-  .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
-    background-color: #f6f6f6;
-    font-weight: 400;
-  }
-
-  .fc-theme-standard td,
-  .fc-theme-standard th {
-    border: None;
-  }
-`;

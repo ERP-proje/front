@@ -44,9 +44,6 @@ function Reservation({
         endTime,
         totalSeatsObj,
       });
-      console.log("in reservation.tsx");
-      console.log(startTime, endTime, totalSeats);
-      console.log(totalSeatsObj);
     }
 
     return () => {
