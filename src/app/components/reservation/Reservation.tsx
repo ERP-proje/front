@@ -75,13 +75,21 @@ function Reservation({
     calendarInstance.current?.gotoDate(date);
   };
 
+  const handleCalanderPopupClick = () => {
+    setShowMiniCalendar(false);
+  };
+
   return (
     <div className="h-full bg-white py-2 px-5 rounded-3xl ">
-      <div ref={calendarRef} id="calendar" className="h-full" />
-
+      <div ref={calendarRef} id="calendar" className="h-full" />{" "}
       {showMiniCalendar && (
-        <MiniCalendarPopup onDateClick={handleMiniCalendarDateClick} />
-      )}
+        <div
+          className="fixed inset-0 flex justify-center items-center z-[90]"
+          onClick={handleCalanderPopupClick}
+        >
+          <MiniCalendarPopup onDateClick={handleMiniCalendarDateClick} />{" "}
+        </div>
+      )}{" "}
     </div>
   );
 }
