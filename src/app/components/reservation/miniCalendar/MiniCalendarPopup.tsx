@@ -8,12 +8,16 @@ interface MiniCalendarPopupProps {
 const MiniCalendarPopup: React.FC<MiniCalendarPopupProps> = ({
   onDateClick,
 }) => (
-  <div className="absolute top-[55px] left-[39%] z-[100]">
+  <div
+    className="absolute top-[55px] z-[100]"
+    onClick={(e) => e.stopPropagation()}
+  >
+    {" "}
     <MiniCalendar
       onDateClick={(date) => {
         onDateClick(date);
       }}
-    />
+    />{" "}
   </div>
 );
 
