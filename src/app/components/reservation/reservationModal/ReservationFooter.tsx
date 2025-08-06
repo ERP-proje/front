@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "../../ui/button";
 
 interface Props {
@@ -5,6 +6,7 @@ interface Props {
   handleAddSubmit: any;
   handleDelete: any;
   handleEditSubmit: any;
+  isSearchSelected: boolean;
 }
 
 export default function ReservationFooter({
@@ -12,13 +14,18 @@ export default function ReservationFooter({
   handleAddSubmit,
   handleDelete,
   handleEditSubmit,
+  isSearchSelected,
 }: Props) {
+  useEffect(() => {
+    console.log("footer에서 선택된 isSearchSelected: ", isSearchSelected);
+  }, [isSearchSelected]);
   return (
     <>
       {event?.mode === "add" && (
         <Button
-          className="flex flex-1 font-light bg-[#D1D1D1] border-0 rounded-lg text-[#FFFFFF] p-2 mt-4 mr-2 hover:bg-[#3C6229] hover:text-[#FFFFFF]"
+          className="flex flex-1 font-light bg-[#B4D89C] border-0 rounded-lg text-[#FFFFFF] p-2 mt-4 mr-2 hover:bg-[#3C6229] hover:text-[#FFFFFF]"
           onClick={handleAddSubmit}
+          disabled={!isSearchSelected}
         >
           저장
         </Button>
