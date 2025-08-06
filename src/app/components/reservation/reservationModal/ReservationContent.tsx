@@ -22,6 +22,8 @@ interface Props {
   }) => void;
   setStartTime: (startTime: string) => void;
   setEndTime: (endTime: string) => void;
+  isSearchSelected: boolean;
+  setIsSearchSelected: (e: boolean) => void;
 }
 
 // 유틸 함수
@@ -71,10 +73,11 @@ export default function ReservationContent({
   setStartTime,
   setEndTime,
   setSearchKeyword,
+  isSearchSelected,
+  setIsSearchSelected,
 }: Props) {
   const [timeError, setTimeError] = useState("");
   const [isValid, setIsValid] = useState<boolean>(true);
-  const [isSearch, setIsSearch] = useState<boolean>(false);
   const [searchLength, setSearchLength] = useState<number>(0);
   useEffect(() => {
     setStartTime(userInfo?.formattedStartTime);
@@ -84,12 +87,9 @@ export default function ReservationContent({
   useEffect(() => {
     setSearchLength(searchKeyword.length);
     if (searchKeyword.length === 0) {
-      setIsSearch(false);
+      setIsSearchSelected(false);
     }
   }, [searchKeyword]);
-  useEffect(() => {
-    console.log("현재 search 상태 : ", isSearch);
-  }, [isSearch]);
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start w-full min-w-0 mx-auto p-2">
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-[1.6] min-w-0">
@@ -97,7 +97,7 @@ export default function ReservationContent({
           {
             <Image
               src={
-                isSearch
+                isSearchSelected
                   ? userInfo?.photoUrl || "/reservationModal/noUser.png"
                   : "/reservationModal/noUser.png"
               }
@@ -207,7 +207,7 @@ export default function ReservationContent({
                   className="p-2 hover:bg-[#F2F8ED] cursor-pointer text-sm md:text-base"
                   onClick={() => {
                     handleSelectCustomer(customer);
-                    setIsSearch(true);
+                    setIsSearchSelected(true);
                   }}
                 >
                   {customer.name}
@@ -221,7 +221,7 @@ export default function ReservationContent({
           </div>
           <input
             className="w-full font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 text-sm md:text-base"
-            value={!isSearch ? "" : userInfo?.phone || ""}
+            value={!isSearchSelected ? "" : userInfo?.phone || ""}
             type="tel"
             onChange={(e) => handleInputChange("phone", e.target.value)}
           />
@@ -237,10 +237,12 @@ export default function ReservationContent({
             </div>
             <div className="flex flex-row gap-1 w-full">
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
-                {!isSearch ? "" : userInfo?.endDate?.split("T")[0] || ""}
+                {!isSearchSelected
+                  ? ""
+                  : userInfo?.endDate?.split("T")[0] || ""}
               </div>
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
-                {!isSearch ? "" : userInfo?.remainingTime || ""}
+                {!isSearchSelected ? "" : userInfo?.remainingTime || ""}
               </div>
             </div>
           </div>
@@ -249,7 +251,7 @@ export default function ReservationContent({
             이용권
           </div>
           <div className="w-full font-light bg-[#F6F6F6] p-[8px_12px] rounded-lg border border-[#D1D1D1] text-[#888888] min-h-7 text-sm md:text-base">
-            {!isSearch ? "" : userInfo?.planName || ""}
+            {!isSearchSelected ? "" : userInfo?.planName || ""}
           </div>
 
           {event?.mode === "edit" && (
@@ -320,7 +322,7 @@ export default function ReservationContent({
                 : "bg-white border border-[#D1D1D1] text-gray-700"
             }`}
             placeholder="회원 관련 메모를 입력하세요"
-            value={!isSearch ? "" : userInfo?.memo || ""}
+            value={!isSearchSelected ? "" : userInfo?.memo || ""}
             onChange={(e) => handleInputChange("memo", e.target.value)}
           />
         </div>
@@ -330,7 +332,7 @@ export default function ReservationContent({
             진도표
           </div>
           <div className="mt-2 w-full rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto max-h-[250px] min-h-[180px]">
-            {!isSearch ? (
+            {!isSearchSelected ? (
               <div className="text-gray-400 text-sm md:text-base">
                 진도 내역이 없습니다.
               </div>

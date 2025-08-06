@@ -252,6 +252,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const [searchKeyword, setSearchKeyword] = useState("");
   const [customerList, setCustomerList] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isSearchSelected, setIsSearchSelected] = useState<boolean>(false);
 
   const debouncedSearch = useCallback(
     debounce(async (keyword: string) => {
@@ -386,6 +387,8 @@ const SelectedEventModal: React.FC<EventProps> = ({
               handleEditProgress={handleEditProgress}
               setStartTime={setStartTime}
               setEndTime={setEndTime}
+              setIsSearchSelected={setIsSearchSelected}
+              isSearchSelected={isSearchSelected}
             />
           </div>
         )}
@@ -397,6 +400,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
             handleAddSubmit={handleAddSubmit}
             handleDelete={handleDelete}
             handleEditSubmit={handleEditSubmit}
+            isSearchSelected={isSearchSelected}
           />
         )}
       </div>
