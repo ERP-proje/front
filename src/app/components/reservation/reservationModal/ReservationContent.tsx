@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import _ from "lodash";
+import Image from "next/image";
 
 interface Props {
   userInfo: any;
@@ -41,7 +41,7 @@ function handleStepTimeChange(
   type: "start" | "end",
   setUserInfo: any,
   setTimeError: any,
-  setIsValid: any,
+  setIsLoading: any, // isValid 대신 setIsLoading 사용
   setTime: any,
   isValid: boolean
 ) {
@@ -53,7 +53,7 @@ function handleStepTimeChange(
   }));
   setTime(timeStr);
 
-  setIsValid(true);
+  setIsLoading(true); // isValid 대신 setIsLoading 사용
   setTimeError("");
 }
 
@@ -70,26 +70,43 @@ export default function ReservationContent({
   handleEditProgress,
   setStartTime,
   setEndTime,
+  setSearchKeyword,
 }: Props) {
   const [timeError, setTimeError] = useState("");
   const [isValid, setIsValid] = useState<boolean>(true);
-
+  const [isSearch, setIsSearch] = useState<boolean>(false);
+  const [searchLength, setSearchLength] = useState<number>(0);
   useEffect(() => {
     setStartTime(userInfo?.formattedStartTime);
     setEndTime(userInfo?.formattedEndTime);
   }, []);
 
+  useEffect(() => {
+    setSearchLength(searchKeyword.length);
+    if (searchKeyword.length === 0) {
+      setIsSearch(false);
+    }
+  }, [searchKeyword]);
+  useEffect(() => {
+    console.log("현재 search 상태 : ", isSearch);
+  }, [isSearch]);
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start w-full min-w-0 mx-auto p-2">
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-[1.6] min-w-0">
         <div className="justify-center mx-auto sm:m-1 size-24 sm:size-32 flex-shrink-0">
-          <Image
-            src={userInfo?.photoUrl || "/reservationModal/noUser.png"}
-            alt="User Photo"
-            width={96}
-            height={96}
-            className="w-full h-full object-cover rounded-full"
-          />
+          {
+            <Image
+              src={
+                isSearch
+                  ? userInfo?.photoUrl || "/reservationModal/noUser.png"
+                  : "/reservationModal/noUser.png"
+              }
+              alt="User Photo"
+              width={96}
+              height={96}
+              className="w-full h-full object-cover rounded-full"
+            />
+          }
         </div>
 
         <div className="flex flex-col mx-2 w-full max-h-[600px] overflow-y-auto space-y-2 text-sm md:text-base flex-1 min-w-0">
@@ -188,7 +205,10 @@ export default function ReservationContent({
                 <div
                   key={customer.customerId}
                   className="p-2 hover:bg-[#F2F8ED] cursor-pointer text-sm md:text-base"
-                  onClick={() => handleSelectCustomer(customer)}
+                  onClick={() => {
+                    handleSelectCustomer(customer);
+                    setIsSearch(true);
+                  }}
                 >
                   {customer.name}
                 </div>
@@ -201,7 +221,7 @@ export default function ReservationContent({
           </div>
           <input
             className="w-full font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 text-sm md:text-base"
-            value={userInfo?.phone || ""}
+            value={!isSearch ? "" : userInfo?.phone || ""}
             type="tel"
             onChange={(e) => handleInputChange("phone", e.target.value)}
           />
@@ -217,10 +237,10 @@ export default function ReservationContent({
             </div>
             <div className="flex flex-row gap-1 w-full">
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
-                {userInfo?.endDate?.split("T")[0] || ""}
+                {!isSearch ? "" : userInfo?.endDate?.split("T")[0] || ""}
               </div>
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
-                {userInfo?.remainingTime || ""}
+                {!isSearch ? "" : userInfo?.remainingTime || ""}
               </div>
             </div>
           </div>
@@ -229,7 +249,7 @@ export default function ReservationContent({
             이용권
           </div>
           <div className="w-full font-light bg-[#F6F6F6] p-[8px_12px] rounded-lg border border-[#D1D1D1] text-[#888888] min-h-7 text-sm md:text-base">
-            {userInfo?.planName || ""}
+            {!isSearch ? "" : userInfo?.planName || ""}
           </div>
 
           {event?.mode === "edit" && (
@@ -300,7 +320,7 @@ export default function ReservationContent({
                 : "bg-white border border-[#D1D1D1] text-gray-700"
             }`}
             placeholder="회원 관련 메모를 입력하세요"
-            value={userInfo?.memo || ""}
+            value={!isSearch ? "" : userInfo?.memo || ""}
             onChange={(e) => handleInputChange("memo", e.target.value)}
           />
         </div>
@@ -310,8 +330,12 @@ export default function ReservationContent({
             진도표
           </div>
           <div className="mt-2 w-full rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto max-h-[250px] min-h-[180px]">
-            {userInfo?.progressList?.filter((p: any) => !p.deleted).length >
-            0 ? (
+            {!isSearch ? (
+              <div className="text-gray-400 text-sm md:text-base">
+                진도 내역이 없습니다.
+              </div>
+            ) : userInfo?.progressList?.filter((p: any) => !p.deleted).length >
+              0 ? (
               userInfo.progressList
                 .filter((p: any) => !p.deleted)
                 .map((p: any) => (
