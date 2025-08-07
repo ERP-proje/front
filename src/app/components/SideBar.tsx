@@ -59,7 +59,7 @@ function SideBar() {
         <Button className="py-6" onClick={handleNavigateUserCalendar}>
           <Image
             src={
-              pathname === ""
+              pathname === "" || pathname === "reservation"
                 ? "/sidebar/calendarFocusIcon.png"
                 : "/sidebar/calendarIcon.png"
             }
