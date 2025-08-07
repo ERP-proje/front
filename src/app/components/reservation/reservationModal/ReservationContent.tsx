@@ -24,6 +24,7 @@ interface Props {
   setEndTime: (endTime: string) => void;
   isSearchSelected: boolean;
   setIsSearchSelected: (e: boolean) => void;
+  mode: "add" | "edit" | undefined;
 }
 
 // 유틸 함수
@@ -75,6 +76,7 @@ export default function ReservationContent({
   setSearchKeyword,
   isSearchSelected,
   setIsSearchSelected,
+  mode,
 }: Props) {
   const [timeError, setTimeError] = useState("");
   const [isValid, setIsValid] = useState<boolean>(true);
@@ -83,7 +85,9 @@ export default function ReservationContent({
     setStartTime(userInfo?.formattedStartTime);
     setEndTime(userInfo?.formattedEndTime);
   }, []);
-
+  useEffect(() => {
+    console.log("ReservationContent 에서 선택된 userInfo : ", userInfo);
+  }, [userInfo]);
   useEffect(() => {
     setSearchLength(searchKeyword.length);
     if (searchKeyword.length === 0) {
@@ -97,7 +101,7 @@ export default function ReservationContent({
           {
             <Image
               src={
-                isSearchSelected
+                mode === "edit" || isSearchSelected
                   ? userInfo?.photoUrl || "/reservationModal/noUser.png"
                   : "/reservationModal/noUser.png"
               }
@@ -221,7 +225,9 @@ export default function ReservationContent({
           </div>
           <input
             className="w-full font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 text-sm md:text-base"
-            value={!isSearchSelected ? "" : userInfo?.phone || ""}
+            value={
+              mode === "edit" || isSearchSelected ? userInfo?.phone || "" : ""
+            }
             type="tel"
             onChange={(e) => handleInputChange("phone", e.target.value)}
           />
@@ -237,12 +243,14 @@ export default function ReservationContent({
             </div>
             <div className="flex flex-row gap-1 w-full">
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
-                {!isSearchSelected
-                  ? ""
-                  : userInfo?.endDate?.split("T")[0] || ""}
+                {mode === "edit" || isSearchSelected
+                  ? userInfo?.endDate?.split("T")[0] || ""
+                  : ""}
               </div>
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
-                {!isSearchSelected ? "" : userInfo?.remainingTime || ""}
+                {mode === "edit" || isSearchSelected
+                  ? userInfo?.remainingTime || ""
+                  : ""}
               </div>
             </div>
           </div>
@@ -251,7 +259,9 @@ export default function ReservationContent({
             이용권
           </div>
           <div className="w-full font-light bg-[#F6F6F6] p-[8px_12px] rounded-lg border border-[#D1D1D1] text-[#888888] min-h-7 text-sm md:text-base">
-            {!isSearchSelected ? "" : userInfo?.planName || ""}
+            {mode === "edit" || isSearchSelected
+              ? userInfo?.planName || ""
+              : ""}
           </div>
 
           {event?.mode === "edit" && (
@@ -322,7 +332,9 @@ export default function ReservationContent({
                 : "bg-white border border-[#D1D1D1] text-gray-700"
             }`}
             placeholder="회원 관련 메모를 입력하세요"
-            value={!isSearchSelected ? "" : userInfo?.memo || ""}
+            value={
+              mode === "edit" || !isSearchSelected ? "" : userInfo?.memo || ""
+            }
             onChange={(e) => handleInputChange("memo", e.target.value)}
           />
         </div>
@@ -332,7 +344,7 @@ export default function ReservationContent({
             진도표
           </div>
           <div className="mt-2 w-full rounded-lg border border-[#D1D1D1] bg-white px-2 py-2 overflow-y-auto max-h-[250px] min-h-[180px]">
-            {!isSearchSelected ? (
+            {mode === "edit" || !isSearchSelected ? (
               <div className="text-gray-400 text-sm md:text-base">
                 진도 내역이 없습니다.
               </div>
