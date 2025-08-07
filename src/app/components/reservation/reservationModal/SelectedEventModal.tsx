@@ -389,6 +389,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
               setEndTime={setEndTime}
               setIsSearchSelected={setIsSearchSelected}
               isSearchSelected={isSearchSelected}
+              mode={event?.mode}
             />
           </div>
         )}
