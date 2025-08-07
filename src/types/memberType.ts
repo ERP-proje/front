@@ -15,7 +15,13 @@ export interface Member {
   tardinessCount: number;
   absenceCount: number;
 }
-
+//회원 등록 필수 정보
+export type FormErrors = {
+  name?: string;
+  gender?: string;
+  birthDate?: string;
+  phone?: string;
+};
 //회원상세
 export interface CustomerDetailResponse {
   code: string;

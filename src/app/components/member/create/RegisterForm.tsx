@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import Dropdown from "../../ui/Dropdown";
-import { FormData } from "@/types/memberType";
+import { FormData, FormErrors } from "@/types/memberType";
 import Camera from "./Camera";
 import { map } from "lodash";
 import RealtimeDropdown from "../../ui/RealtimeDropdown";
@@ -9,11 +9,13 @@ import RealtimeDropdown from "../../ui/RealtimeDropdown";
 export interface RegisterFormProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  formErrors?: FormErrors;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
   formData,
   setFormData,
+  formErrors = {},
 }) => {
   const handleInputChange = (key: keyof FormData, value: any) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
@@ -24,14 +26,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 
   return (
     <div className="space-y-6 p-6">
-      {/* 프로필 이미지와 기본 정보 */}
       <div className="flex gap-6">
-        {/* 왼쪽 - 이미지 선택 */}
         <div className="flex flex-col items-center w-1/3">
-          <Camera onCapture={handleCapture} />
+          <Camera
+            onCapture={(photoFile) => handleInputChange("photoFile", photoFile)}
+          />
         </div>
 
-        {/* 오른쪽 - 이름, 성별, 생년월일, 전화번호 */}
         <div className="flex flex-col w-2/3 gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -39,10 +40,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               <input
                 type="text"
                 placeholder="이름"
-                className="input-content w-full mb-6"
+                className="input-content w-full mb-1"
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
               />
+              {formErrors.name && (
+                <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">
@@ -57,10 +61,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 value={formData.gender}
                 className="w-full"
                 onChange={(selectedValue) => {
-                  const mappedGender = selectedValue as "MALE" | "FEMALE";
-                  handleInputChange("gender", mappedGender);
+                  handleInputChange(
+                    "gender",
+                    selectedValue as "MALE" | "FEMALE"
+                  );
                 }}
               />
+              {formErrors.gender && (
+                <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">
@@ -68,11 +77,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               </label>
               <input
                 type="date"
-                placeholder="생년월일"
                 className="input-content w-full"
                 value={formData.birthDate}
                 onChange={(e) => handleInputChange("birthDate", e.target.value)}
               />
+              {formErrors.birthDate && (
+                <p className="text-red-500 text-xs mt-1">
+                  {formErrors.birthDate}
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">
@@ -80,11 +93,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="01012341234"
+                placeholder="-를 제외하고 입력해주세요"
                 className="input-content w-full"
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
               />
+              {formErrors.phone && (
+                <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>
+              )}
             </div>
           </div>
         </div>
@@ -123,7 +139,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         <div className="col-span-2">
           <label className="block text-sm text-gray-600 mb-1">약관</label>
           <textarea
-            placeholder="약관약관약관"
+            placeholder="약관"
             className="input-content w-full"
             readOnly
           ></textarea>

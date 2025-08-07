@@ -8,7 +8,7 @@ import Toggle from "./Toggle";
 import RegisterForm from "./RegisterForm";
 import { memberAPI } from "@/api/member";
 import Plan from "./Plan";
-import { FormData } from "@/types/memberType";
+import { FormData, FormErrors } from "@/types/memberType";
 import { getCurrentDate } from "@/utils/formatDate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRegisterMember } from "@/hooks/member/useRegisterMember";
@@ -92,7 +92,7 @@ const CreateMember: React.FC<{
       return newData;
     });
   };
-
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlanPrice, setSelectedPlanPrice] = useState<number>(0);
   const [accordionOpenKey, setAccordionOpenKey] = useState<string[]>([]);
@@ -102,6 +102,19 @@ const CreateMember: React.FC<{
     planPayment: "",
     otherPayment: "",
   });
+
+  const validateForm = (): boolean => {
+    const errors: FormErrors = {};
+
+    if (!formData.name.trim()) errors.name = "이름을 입력해주세요.";
+    if (!formData.gender) errors.gender = "성별을 선택해주세요.";
+    if (!formData.birthDate) errors.birthDate = "생년월일을 입력해주세요.";
+    if (!formData.phone.trim()) errors.phone = "전화번호를 입력해주세요.";
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   // 할인율 변경 시 자동으로 할인 가격을 계산
   useEffect(() => {
     const discountedPrice = Math.round(
@@ -195,17 +208,9 @@ const CreateMember: React.FC<{
   const closeModal = () => setIsModalOpen(false);
 
   const handleRegister = async () => {
-    try {
-      console.info("회원 등록 요청 데이터:", formData);
-      console.log("확인용 회원등록 " + formData);
-      if (
-        formData.planPayment.paymentsMethod === "OTHER" &&
-        !formData.planPayment.otherPaymentMethod
-      ) {
-        alert("기타 결제 방법을 입력해주세요.");
-        return;
-      }
+    if (!validateForm()) return;
 
+    try {
       const formattedData = {
         ...formData,
         planPayment: {
@@ -213,21 +218,17 @@ const CreateMember: React.FC<{
           registrationAt:
             formData.planPayment.registrationAt || new Date().toISOString(),
         },
-        otherPayment: Array.isArray(formData.otherPayment) // ✅ 배열 보장
+        otherPayment: Array.isArray(formData.otherPayment)
           ? formData.otherPayment.map((payment) => ({
               ...payment,
-              price: payment.price ? Number(payment.price) : 0, // ✅ 숫자로 변환
+              price: payment.price ? Number(payment.price) : 0,
               registrationAt:
                 payment.registrationAt || new Date().toISOString(),
             }))
           : [],
       };
 
-      console.info("회원 등록 요청 데이터:", formattedData);
       const response = await memberAPI.registMember(formattedData);
-      console.info("회원 등록 성공:", response);
-      // ✅ MemberList 데이터 다시 가져오기 (React Query 캐시 무효화)
-      // await registerMemberMutation.mutateAsync(formData);
       queryClient.invalidateQueries({ queryKey: ["members", "ACTIVE"] });
       closeModal();
     } catch (error) {
@@ -252,7 +253,11 @@ const CreateMember: React.FC<{
         isOpen={isModalOpen}
         onClose={closeModal}
         leftChildren={
-          <RegisterForm formData={formData} setFormData={setFormData} />
+          <RegisterForm
+            formData={formData}
+            setFormData={setFormData}
+            formErrors={formErrors}
+          />
         }
         rightChildren={
           <div className="relative h-full flex flex-col overflow-y-scroll">
