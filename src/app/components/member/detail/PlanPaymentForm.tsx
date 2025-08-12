@@ -20,6 +20,7 @@ const PlanPaymentForm: React.FC<PlanPaymentFormProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPaid, setIsPaid] = useState(customer.planPayment?.status ?? false);
+
   useEffect(() => {
     setIsPaid(customer.planPayment?.status ?? false);
   }, [customer.planPayment?.status]);
@@ -34,16 +35,13 @@ const PlanPaymentForm: React.FC<PlanPaymentFormProps> = ({
   const { planPayment } = customer;
 
   // ✅ 결제 상태 변경 핸들러
-  const handleToggle = () => {
-    const newStatus = !isPaid;
+  const handleStatusChange = (newStatus: boolean) => {
     setIsPaid(newStatus);
-
     console.log("📌 기존 결제 상태:", planPayment.status);
     console.log("✅ 변경된 결제 상태:", newStatus);
 
-    // ✅ `planPaymentStatus`를 `UpdateCustomerDetail` 타입에 맞게 전달
     onModify({
-      customerId: customer.customerId, // 고객 ID 유지
+      customerId: customer.customerId,
       planPaymentStatus: newStatus,
     });
   };
@@ -61,23 +59,34 @@ const PlanPaymentForm: React.FC<PlanPaymentFormProps> = ({
               {planPayment.planPrice - planPayment.discountPrice}원
             </p>
           </div>
-          {/* 결제토글 */}
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={handleToggle}
-          >
-            <FaRegCircleCheck
-              className={`w-5 h-5 ${
-                isPaid ? "text-[#3C6229]" : "text-gray-300"
-              } transition-colors duration-200`}
-            />
-            <span
-              className={`text-sm ${
-                isPaid ? "text-[#3C6229]" : "text-gray-600"
+          {/* 결제 버튼들 */}
+          <div className="flex justify-start gap-2">
+            <button
+              onClick={() => handleStatusChange(false)}
+              className={`flex items-center gap-2 p-2 rounded-md transition-colors duration-200 ${
+                !isPaid ? "text-[#DB5461]" : "text-gray-500"
               }`}
             >
-              {isPaid ? "결제 완료" : "미납"}
-            </span>
+              <FaRegCircleCheck
+                className={`w-5 h-5 ${
+                  !isPaid ? "text-[#DB5461]" : "text-gray-400"
+                }`}
+              />
+              <span className="text-sm font-semibold">미납</span>
+            </button>
+            <button
+              onClick={() => handleStatusChange(true)}
+              className={`flex items-center gap-2 p-2 rounded-md transition-colors duration-200 ${
+                isPaid ? "text-[#3C6229]" : "text-gray-500"
+              }`}
+            >
+              <FaRegCircleCheck
+                className={`w-5 h-5 ${
+                  isPaid ? "text-[#3C6229]" : "text-gray-400"
+                }`}
+              />
+              <span className="text-sm font-semibold">결제 완료</span>
+            </button>
           </div>
         </div>
       }
