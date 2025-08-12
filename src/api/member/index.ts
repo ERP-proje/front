@@ -54,6 +54,12 @@ export const memberAPI = {
       console.info("회원 등록 성공:", response.data);
       return response.data;
     } catch (error: any) {
+      alert(
+        "회원 등록 실패: " +
+          (error.response?.data
+            ? JSON.stringify(error.response.data.message)
+            : error.message)
+      );
       console.error("회원 등록 실패:", error.response?.data || error.message);
       throw error;
     }
