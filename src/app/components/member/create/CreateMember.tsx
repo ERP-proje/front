@@ -233,7 +233,6 @@ const CreateMember: React.FC<{
       closeModal();
     } catch (error) {
       console.error("회원 등록 실패:", error);
-      alert("회원 등록에 실패했습니다.");
     }
   };
 
