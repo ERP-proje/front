@@ -13,7 +13,7 @@ export default async function getReservationCustomerDetails(
     const data = response.data.data;
 
     if (data) {
-      return {
+      const result = {
         ...data,
         data: {
           ...data,
@@ -22,7 +22,10 @@ export default async function getReservationCustomerDetails(
           mode: "edit",
         },
       };
+      console.log("받아온 예약 고객 상세 데이터:", result);
+      return result;
     }
+    console.log("받아온 예약 고객 상세 데이터 (없음):", response.data);
     return response.data;
   } catch (error: unknown) {
     const errorMessage = errorHandler(error);

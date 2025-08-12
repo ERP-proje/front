@@ -230,6 +230,7 @@ export default function ReservationContent({
             }
             type="tel"
             onChange={(e) => handleInputChange("phone", e.target.value)}
+            disabled
           />
 
           <div className="flex flex-col">
@@ -244,12 +245,12 @@ export default function ReservationContent({
             <div className="flex flex-row gap-1 w-full">
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
                 {mode === "edit" || isSearchSelected
-                  ? userInfo?.endDate?.split("T")[0] || ""
+                  ? userInfo?.planEndDate?.split("T")[0] || ""
                   : ""}
               </div>
               <div className="flex-1 font-light bg-[#F6F6F6] border border-[#D1D1D1] p-[8px_12px] rounded-lg text-[#888888] min-h-7 min-w-0 text-sm md:text-base">
                 {mode === "edit" || isSearchSelected
-                  ? userInfo?.remainingTime || ""
+                  ? userInfo?.remainingTime
                   : ""}
               </div>
             </div>
