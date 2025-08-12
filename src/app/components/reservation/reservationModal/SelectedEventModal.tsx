@@ -289,7 +289,7 @@ const SelectedEventModal: React.FC<EventProps> = ({
   const handleSelectCustomer = async (customer: any) => {
     if (customer?.customerId) {
       console.log("handleSelectCustomer", customer?.customerId);
-      const customerDetail = await memberAPI?.getCustomerDetail(
+      const customerDetail = await getReservationCustomerDetails(
         customer?.customerId
       );
       setUserInfo((prev: any) => ({
@@ -301,6 +301,8 @@ const SelectedEventModal: React.FC<EventProps> = ({
         planName: customerDetail?.data?.planPayment?.planName,
         memo: customerDetail?.data?.memo,
         progressList: customerDetail?.data?.progressList,
+        planEndDate: customerDetail?.data?.planEndDate,
+        remainingTime: customerDetail?.data?.remainingTime,
       }));
       setSearchKeyword(customer.name);
       setCustomerList([]);
