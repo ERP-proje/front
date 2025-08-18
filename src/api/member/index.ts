@@ -1,6 +1,7 @@
 import type { FormData } from "@/types/memberType";
 import apiClient from "../core/apiClient";
 import errorHandler from "../core/errorHandler";
+import debounce from "lodash/debounce";
 /**
  * Base64 이미지를 Blob으로 변환하는 함수
  */
@@ -22,48 +23,52 @@ export const memberAPI = {
    * @returns 등록된 회원 데이터
    */
 
-  registMember: async (data: FormData) => {
-    try {
-      const formPayload = new FormData();
-      console.log("for Payload: ", formPayload);
-      // ✅ req 객체에서 photoFile 제거
-      const { photoFile, ...reqData } = data;
+  registMember: debounce(
+    async (data: FormData) => {
+      try {
+        const formPayload = new FormData();
+        console.log("for Payload: ", formPayload);
+        // ✅ req 객체에서 photoFile 제거
+        const { photoFile, ...reqData } = data;
 
-      // ✅ JSON 데이터를 Blob으로 변환하여 FormData에 추가
-      const reqBlob = new Blob([JSON.stringify(reqData)], {
-        type: "application/json",
-      });
-      formPayload.append("req", reqBlob); // filename="blob" 문제 해결
+        // ✅ JSON 데이터를 Blob으로 변환하여 FormData에 추가
+        const reqBlob = new Blob([JSON.stringify(reqData)], {
+          type: "application/json",
+        });
+        formPayload.append("req", reqBlob); // filename="blob" 문제 해결
 
-      // ✅ file 필드에 photoFile 추가 (File 객체인지 확인)
-      if (photoFile && photoFile instanceof File) {
-        formPayload.append("file", photoFile);
-      }
-      console.log("formPayload : ", formPayload);
-      const response = await apiClient.post(
-        "api/customer/addCustomer",
-        formPayload,
-
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+        // ✅ file 필드에 photoFile 추가 (File 객체인지 확인)
+        if (photoFile && photoFile instanceof File) {
+          formPayload.append("file", photoFile);
         }
-      );
+        console.log("formPayload : ", formPayload);
+        const response = await apiClient.post(
+          "api/customer/addCustomer",
+          formPayload,
 
-      console.info("회원 등록 성공:", response.data);
-      return response.data;
-    } catch (error: any) {
-      alert(
-        "회원 등록 실패: " +
-          (error.response?.data
-            ? JSON.stringify(error.response.data.message)
-            : error.message)
-      );
-      console.error("회원 등록 실패:", error.response?.data || error.message);
-      throw error;
-    }
-  },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        console.info("회원 등록 성공:", response.data);
+        return response.data;
+      } catch (error: any) {
+        alert(
+          "회원 등록 실패: " +
+            (error.response?.data
+              ? JSON.stringify(error.response.data.message)
+              : error.message)
+        );
+        console.error("회원 등록 실패:", error.response?.data || error.message);
+        throw error;
+      }
+    },
+    2000,
+    { leading: true, trailing: false }
+  ),
 
   /**
    * 회원 상세정보 수정 메서드

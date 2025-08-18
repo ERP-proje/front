@@ -126,6 +126,13 @@ const SelectedEventModal: React.FC<EventProps> = ({
 
   const handleAddSubmit = async () => {
     if (userInfo?.mode === "add") {
+      console.log("전송할 데이터 : ", {
+        ...userInfo,
+        customerId: userInfo.customerId,
+        startStr: timeMapping[`${startTime}`],
+        endStr: timeMapping[`${endTime}`],
+        eventdate: event?.startStr ? event.startStr.split("T")[0] : "",
+      });
       const response = await postAddReservations({
         ...userInfo,
         customerId: userInfo.customerId,
