@@ -75,23 +75,29 @@ export const memberAPI = {
    * @param data 회원 상세정보 데이터
    * @returns 수정된 회원 데이터
    */
-  updateCustomerDetail: async (data: FormData) => {
-    try {
-      const response = await apiClient.put(
-        "/api/customer/updateCustomer",
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("회원 상세 수정 오류:", error);
-      throw error;
-    }
-  },
+ updateCustomerDetail: async (data: FormData) => {
+  try { 
+    const response = await apiClient.put(
+      "/api/customer/updateCustomer",
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // 2초 뒤 새로고침
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+
+    return response.data;
+  } catch (error) {
+    console.error("회원 상세 수정 오류:", error);
+    throw error;
+  }
+},
 
   /**
    * 이용 중인 회원 조회 메서드

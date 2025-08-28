@@ -231,6 +231,7 @@ const CreateMember: React.FC<{
       const response = await memberAPI.registMember(formattedData);
       queryClient.invalidateQueries({ queryKey: ["members", "ACTIVE"] });
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error("회원 등록 실패:", error);
     }
