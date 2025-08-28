@@ -86,7 +86,6 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
           }))
         : prev?.otherPayment ?? [],
     }));
-
     setIsModified(true);
   };
 
@@ -120,6 +119,7 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
         setIsModified(false);
         fetchCustomer(customerId);
         onClose();
+        window.location.reload();
       } catch (error) {
         console.error("❌ 회원 정보 수정 실패:", error);
       }
@@ -132,6 +132,7 @@ const DetailMember: React.FC<DetailMemberProps> = ({ customerId, onClose }) => {
         await updateCustomerStatus(customerId, "DELETED");
         queryClient.invalidateQueries({ queryKey: ["members", "ACTIVE"] });
         onClose();
+        window.location.reload();
       } catch (error) {
         console.error("❌ 회원 삭제 실패:", error);
         alert("회원 삭제 중 오류가 발생했습니다.");
